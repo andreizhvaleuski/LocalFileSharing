@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleDemo", "ConsoleDemo\ConsoleDemo.csproj", "{30D80177-3154-4DEC-A492-B3BDC271FDE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoclaFileSharing.Network", "LoclaFileSharing.Network\LoclaFileSharing.Network.csproj", "{AC865632-4FD6-45CE-AE83-A363FBDE18D5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{30D80177-3154-4DEC-A492-B3BDC271FDE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30D80177-3154-4DEC-A492-B3BDC271FDE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30D80177-3154-4DEC-A492-B3BDC271FDE9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AC865632-4FD6-45CE-AE83-A363FBDE18D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AC865632-4FD6-45CE-AE83-A363FBDE18D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AC865632-4FD6-45CE-AE83-A363FBDE18D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AC865632-4FD6-45CE-AE83-A363FBDE18D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
