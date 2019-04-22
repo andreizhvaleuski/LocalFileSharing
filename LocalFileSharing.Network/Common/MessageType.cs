@@ -6,7 +6,7 @@
         Unspecified = 0,
         Keepalive = 1,
         SendFileInitial = 2,
-        SendFile = 3 ,
+        SendFileRegular = 3 ,
         SendFileEnd = 4
     }
 }
