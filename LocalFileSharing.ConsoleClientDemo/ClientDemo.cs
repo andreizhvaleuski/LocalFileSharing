@@ -8,13 +8,13 @@ namespace LocalFileSharing.ConsoleClientDemo
     {
         static void Main(string[] args)
         {
-            TcpClient client = new TcpClient(
-                new IPEndPoint(
-                    IPAddress.Loopback, 
-                    60000
-            ));
+            //TcpClient client = new TcpClient(
+            //    new IPEndPoint(
+            //        IPAddress.Loopback,
+            //        60000
+            //));
 
-            client.StartReceiveMessages();
+            //client.StartReceiveMessages();
         }
     }
 }

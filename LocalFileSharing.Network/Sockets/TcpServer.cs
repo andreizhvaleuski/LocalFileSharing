@@ -92,7 +92,7 @@ namespace LocalFileSharing.Network.Sockets
                 formatter.Serialize(stream, obj);
                 buffer = stream.ToArray();
             }
-            connectedClient.Send(MessageFraming.WrapMessage(buffer));
+            //connectedClient.Send(MessageFraming.WrapMessage(buffer));
         }
     }
 }
