@@ -9,7 +9,7 @@ namespace LocalFileSharing.ConsoleServerDemo
     {
         static void Main(string[] args)
         {
-            TcpServerSocket server = new TcpServerSocket(
+            TcpServer server = new TcpServer(
                 new IPEndPoint(
                     IPAddress.Loopback,
                     60000

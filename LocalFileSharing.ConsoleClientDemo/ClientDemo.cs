@@ -8,7 +8,7 @@ namespace LocalFileSharing.ConsoleClientDemo
     {
         static void Main(string[] args)
         {
-            TcpClientSocket client = new TcpClientSocket(
+            TcpClient client = new TcpClient(
                 new IPEndPoint(
                     IPAddress.Loopback, 
                     60000
