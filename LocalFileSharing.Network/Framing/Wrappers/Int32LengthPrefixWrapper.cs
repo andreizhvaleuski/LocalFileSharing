@@ -38,7 +38,7 @@ namespace LocalFileSharing.Network.Framing.Wrappers
             if (buffer.Length != LengthPrefixBytes)
             {
                 throw new ArgumentException(
-                    $"Buffer must be {LengthPrefixBytes} bytes long.",
+                    $"The {nameof(buffer)} must be {LengthPrefixBytes} bytes long.",
                     nameof(buffer)
                 );
             }
