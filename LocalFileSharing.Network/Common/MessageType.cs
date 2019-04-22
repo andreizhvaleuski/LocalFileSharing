@@ -5,7 +5,8 @@
         Unknown = -1,
         Unspecified = 0,
         Keepalive = 1,
-        Utf16LittleEndian = 2,
-        Utf16BigEndian = 3
+        SendFileInitial = 2,
+        SendFile = 3 ,
+        SendFileEnd = 4
     }
 }
