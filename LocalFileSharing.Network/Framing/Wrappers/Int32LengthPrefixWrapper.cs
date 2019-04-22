@@ -4,46 +4,40 @@ namespace LocalFileSharing.Network.Framing.Wrappers
 {
     public class Int32LengthPrefixWrapper : ILengthPrefixWrapper
     {
-        public int LengthPrefixBytes
+        public int LengthPrefixSize => sizeof(int);
+
+        public byte[] Wrap(byte[] unwrappedBuffer)
         {
-            get
+            if (unwrappedBuffer is null)
             {
-                return sizeof(Int32);
+                throw new ArgumentNullException(nameof(unwrappedBuffer));
             }
+
+            byte[] lengthBuffer = BitConverter.GetBytes(unwrappedBuffer.Length);
+
+            byte[] wrappedBuffer = new byte[lengthBuffer.Length + unwrappedBuffer.Length];
+            lengthBuffer.CopyTo(wrappedBuffer, 0);
+            unwrappedBuffer.CopyTo(wrappedBuffer, lengthBuffer.Length);
+
+            return wrappedBuffer;
         }
 
-        public byte[] Wrap(byte[] buffer)
+        public int GetLengthPrefixValue(byte[] wrappedBuffer)
         {
-            if (buffer is null)
+            if (wrappedBuffer is null)
             {
-                throw new ArgumentNullException(nameof(buffer));
+                throw new ArgumentNullException(nameof(wrappedBuffer));
             }
 
-            byte[] lengthBuffer = BitConverter.GetBytes(buffer.Length);
-
-            byte[] wrappedMessage = new byte[lengthBuffer.Length + buffer.Length];
-            lengthBuffer.CopyTo(wrappedMessage, 0);
-            buffer.CopyTo(wrappedMessage, lengthBuffer.Length);
-
-            return wrappedMessage;
-        }
-
-        public int Unwrap(byte[] buffer)
-        {
-            if (buffer is null)
-            {
-                throw new ArgumentNullException(nameof(buffer));
-            }
-
-            if (buffer.Length != LengthPrefixBytes)
+            if (wrappedBuffer.Length < LengthPrefixSize)
             {
                 throw new ArgumentException(
-                    $"The {nameof(buffer)} must be {LengthPrefixBytes} bytes long.",
-                    nameof(buffer)
+                    $"The {nameof(wrappedBuffer)} length cannot be less than {LengthPrefixSize} bytes.",
+                    nameof(wrappedBuffer)
                 );
             }
 
-            int length = BitConverter.ToInt32(buffer, 0);
+            int length = BitConverter.ToInt32(wrappedBuffer, 0);
             return length;
         }
     }

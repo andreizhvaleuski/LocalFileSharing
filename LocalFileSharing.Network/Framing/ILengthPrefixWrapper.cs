@@ -2,7 +2,7 @@
 {
     public interface ILengthPrefixWrapper : IWrapper
     {
-        int LengthPrefixBytes { get; }
+        int LengthPrefixSize { get; }
 
         int GetLengthPrefixValue(byte[] buffer);
     }
