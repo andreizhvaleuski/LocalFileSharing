@@ -46,7 +46,7 @@ namespace LocalFileSharing.Network.Common
                 throw new ArgumentNullException(nameof(typeBuffer));
             }
 
-            if (typeBuffer.Length == MessageTypeLength)
+            if (typeBuffer.Length != MessageTypeLength)
             {
                 throw new ArgumentException(
                     $"The {typeBuffer} must be {MessageTypeLength} bytes long.",
