@@ -7,23 +7,19 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 using LocalFileSharing.Network.Content;
-using LocalFileSharing.Network.Framing.Wrappers;
+using LocalFileSharing.Network.Framing;
 
 namespace LocalFileSharing.Network.Sockets
 {
-    public class TcpClientSocket
+    public class TcpClientSocket : TcpSocketBase
     {
-        public const int MinPort = 61001;
-
-        public const int MaxPort = 65535;
-
         protected readonly Socket client;
 
-        protected static Int32LengthPrefixWrapper lengthPrefixWrapper =
-            new Int32LengthPrefixWrapper();
-
-        public TcpClientSocket(IPEndPoint endPoint)
-        {
+        public TcpClientSocket(
+            IPEndPoint endPoint,
+            ILengthPrefixWrapper lengthPrefixWrapper,
+            ITypePrefixWrapper typePrefixWrapper
+        ) : base(lengthPrefixWrapper, typePrefixWrapper) {
             if (endPoint is null)
             {
                 throw new ArgumentNullException(nameof(endPoint));
