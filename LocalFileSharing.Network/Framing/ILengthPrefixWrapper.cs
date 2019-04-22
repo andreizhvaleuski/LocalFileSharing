@@ -4,6 +4,6 @@
     {
         int LengthPrefixBytes { get; }
 
-        int Unwrap(byte[] buffer);
+        int GetLengthPrefixValue(byte[] buffer);
     }
 }
