@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace LocalFileSharing.UnitTests.Network
 {
     [TestFixture]
-    public class Int32LengthPrefixWrapperTests
+    public class LengthPrefixWrapperTests
     {
         private LengthPrefixWrapper lengthPrefixWrapper;
 
