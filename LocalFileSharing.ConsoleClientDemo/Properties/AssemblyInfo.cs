@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ConsoleDemo")]
+[assembly: AssemblyTitle("LocalFileSharing.ConsoleClientDemo")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ConsoleDemo")]
+[assembly: AssemblyProduct("LocalFileSharing.ConsoleClientDemo")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("30d80177-3154-4dec-a492-b3bdc271fde9")]
+[assembly: Guid("0e2f6d85-50b3-4862-b9d3-61934aca120b")]
 
 // Version information for an assembly consists of the following four values:
 //

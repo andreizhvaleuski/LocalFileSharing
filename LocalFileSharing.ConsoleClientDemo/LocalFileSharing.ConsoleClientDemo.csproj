@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{30D80177-3154-4DEC-A492-B3BDC271FDE9}</ProjectGuid>
+    <ProjectGuid>{0E2F6D85-50B3-4862-B9D3-61934ACA120B}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>ConsoleDemo</RootNamespace>
-    <AssemblyName>ConsoleDemo</AssemblyName>
+    <RootNamespace>LocalFileSharing.ConsoleClientDemo</RootNamespace>
+    <AssemblyName>LocalFileSharing.ConsoleClientDemo</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -43,11 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="ClientDemo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LocalFileSharing.Network\LocalFileSharing.Network.csproj">
+      <Project>{02b56641-6ab7-405c-8b08-add596df687c}</Project>
+      <Name>LocalFileSharing.Network</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
