@@ -1,6 +1,6 @@
 ﻿namespace LocalFileSharing.Network.Framing
 {
-    interface ITypePrefixWrapper : IWrapper
+    public interface ITypePrefixWrapper : IWrapper
     {
         int TypePrefixBytes { get; }
     }

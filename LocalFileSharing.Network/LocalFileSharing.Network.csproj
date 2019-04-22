@@ -51,6 +51,7 @@
     <Compile Include="Sockets\TcpClientSocket.cs" />
     <Compile Include="Sockets\TcpServerSocket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sockets\TcpSocketBase.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
