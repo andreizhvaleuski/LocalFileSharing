@@ -55,7 +55,7 @@ namespace LocalFileSharing.Network.Common
             }
 
             string message = Encoding.Unicode.GetString(typeBuffer);
-            MessageType type = MessageType.Unknown;
+            MessageType type = MessageType.Unspecified;
 
             if (message.Equals(Keepalive, StringComparison.InvariantCultureIgnoreCase))
             {
