@@ -22,12 +22,15 @@ namespace LocalFileSharing.UnitTests.Network
         [TestCase("")]
         public void Wrap_ValidBuffer_ReturnsWrappedBuffer(string message)
         {
-            byte[] messageBuffer = Encoding.Unicode.GetBytes(message);
-            int expectedLength = messageBuffer.Length;
+            byte[] unwrappedBuffer = Encoding.Unicode.GetBytes(message);
+            byte[] lengthPrefixBuffer = BitConverter.GetBytes(unwrappedBuffer.Length);
+            byte[] expectedWrappedMessageBuffer = new byte[unwrappedBuffer.Length + lengthPrefixBuffer.Length];
+            lengthPrefixBuffer.CopyTo(expectedWrappedMessageBuffer, 0);
+            unwrappedBuffer.CopyTo(expectedWrappedMessageBuffer, lengthPrefixBuffer.Length);
 
-            byte[] wrappedMessageBuffer = lengthPrefixWrapper.Wrap(messageBuffer);
-            int actualLength = BitConverter.ToInt32(wrappedMessageBuffer, 0);
-            Assert.AreEqual(expectedLength, actualLength);
+            byte[] actualWrappedMessageBuffer = lengthPrefixWrapper.Wrap(unwrappedBuffer);
+
+            Assert.AreEqual(expectedWrappedMessageBuffer, actualWrappedMessageBuffer);
         }
 
         [Test]
@@ -58,7 +61,8 @@ namespace LocalFileSharing.UnitTests.Network
         {
             byte[] wrappedBuffer = new byte[wrappedBufferLength];
 
-            var ex = Assert.Throws<ArgumentException>(() => lengthPrefixWrapper.GetLengthPrefixValue(wrappedBuffer));
+            var ex = Assert.Throws<ArgumentException>(() =>
+                lengthPrefixWrapper.GetLengthPrefixValue(wrappedBuffer));
             Assert.That(ex.ParamName, Is.EqualTo("wrappedBuffer"));
         }
 
@@ -67,7 +71,8 @@ namespace LocalFileSharing.UnitTests.Network
         {
             byte[] wrappedBuffer = null;
 
-            var ex = Assert.Throws<ArgumentNullException>(() => lengthPrefixWrapper.GetLengthPrefixValue(wrappedBuffer));
+            var ex = Assert.Throws<ArgumentNullException>(() =>
+                lengthPrefixWrapper.GetLengthPrefixValue(wrappedBuffer));
             Assert.That(ex.ParamName, Is.EqualTo("wrappedBuffer"));
         }
     }
