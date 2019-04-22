@@ -7,10 +7,11 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 
 using LocalFileSharing.Network.Content;
+using LocalFileSharing.Network.Framing;
 
 namespace LocalFileSharing.Network.Sockets
 {
-    public class TcpServerSocket
+    public class TcpServerSocket : TcpSocketBase
     {
         public const int MinAllowedPort = 61001;
 
@@ -20,7 +21,12 @@ namespace LocalFileSharing.Network.Sockets
 
         protected Socket connectedClient;
 
-        public TcpServerSocket(IPAddress localIPAddress, int port)
+        public TcpServerSocket(
+            IPAddress localIPAddress, 
+            int port,
+            ILengthPrefixWrapper lengthPrefixWrapper,
+            ITypePrefixWrapper typePrefixWrapper
+        ) : base(lengthPrefixWrapper, typePrefixWrapper)
         {
             if (localIPAddress is null)
             {
@@ -42,21 +48,6 @@ namespace LocalFileSharing.Network.Sockets
                 ProtocolType.Tcp
             );
             listener.Bind(new IPEndPoint(localIPAddress, port));
-        }
-
-        public TcpServerSocket(IPEndPoint localEndPoint)
-        {
-            if (localEndPoint is null)
-            {
-                throw new ArgumentNullException(nameof(localEndPoint));
-            }
-
-            listener = new Socket(
-                AddressFamily.InterNetwork,
-                SocketType.Stream,
-                ProtocolType.Tcp
-            );
-            listener.Bind(localEndPoint);
         }
 
         public void StartListening()
