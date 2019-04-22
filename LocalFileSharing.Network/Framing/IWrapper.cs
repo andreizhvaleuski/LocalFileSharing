@@ -2,6 +2,6 @@
 {
     public interface IWrapper
     {
-        byte[] Wrap(byte[] source);
+        byte[] Wrap(byte[] unwrappedBuffer);
     }
 }
