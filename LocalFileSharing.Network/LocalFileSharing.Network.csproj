@@ -57,7 +57,7 @@
     <Compile Include="Sockets\TcpSocketBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Common\Entities\" />
+    <Folder Include="Common\Content\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
