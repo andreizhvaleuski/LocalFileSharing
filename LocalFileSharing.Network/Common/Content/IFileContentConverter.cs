@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LocalFileSharing.Network.Framing
 {
-    class IFileContentConverter
+    interface IFileContentConverter
     {
 
     }
