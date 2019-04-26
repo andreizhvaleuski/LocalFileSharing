@@ -19,7 +19,8 @@ namespace LocalFileSharing.Network.Sockets
             IPEndPoint endPoint,
             ILengthPrefixWrapper lengthPrefixWrapper,
             ITypePrefixWrapper typePrefixWrapper
-        ) : base(lengthPrefixWrapper, typePrefixWrapper) {
+        ) : base(lengthPrefixWrapper, typePrefixWrapper)
+        {
             if (endPoint is null)
             {
                 throw new ArgumentNullException(nameof(endPoint));
