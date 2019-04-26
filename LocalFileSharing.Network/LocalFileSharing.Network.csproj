@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Content\FileBaseContent.cs" />
+    <Compile Include="Common\Content\SendFileCancelContent.cs" />
     <Compile Include="Common\Content\SendFileEndContent.cs" />
     <Compile Include="Common\Content\SendFileInitContent.cs" />
     <Compile Include="Common\Content\SendFileRegularContent.cs" />
