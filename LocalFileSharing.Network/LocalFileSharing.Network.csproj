@@ -58,7 +58,6 @@
     <Compile Include="Common\Content\SendFileRegularContent.cs" />
     <Compile Include="Common\FileContentConverter.cs" />
     <Compile Include="Common\MessageTypeConverter.cs" />
-    <Compile Include="Content\DemoType.cs" />
     <Compile Include="Common\MessageType.cs" />
     <Compile Include="Framing\ILengthPrefixWrapper.cs" />
     <Compile Include="Framing\ITypePrefixWrapper.cs" />
