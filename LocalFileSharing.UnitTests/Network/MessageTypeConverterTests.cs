@@ -16,7 +16,7 @@ namespace LocalFileSharing.UnitTests.Network
         [TestCase(MessageType.SendFileEnd, MessageTypeConverter.SendFileEnd)]
         [TestCase(MessageType.SendFileCancel, MessageTypeConverter.SendFileCancel)]
         [TestCase(MessageType.ReceiveFileInitial, MessageTypeConverter.ReceiveFileInitial)]
-        [TestCase(MessageType.ReciveFileRegular, MessageTypeConverter.ReciveFileRegular)]
+        [TestCase(MessageType.ReceiveFileRegular, MessageTypeConverter.ReceiveFileRegular)]
         [TestCase(MessageType.ReceiveFileEnd, MessageTypeConverter.ReceiveFileEnd)]
         [TestCase(MessageType.ReceiveFileCancel, MessageTypeConverter.ReceiveFileCancel)]
         public void GetBytes_ValidMessageType_ReturnsValidBuffer(MessageType type, string typeShortName)
@@ -44,7 +44,7 @@ namespace LocalFileSharing.UnitTests.Network
         [TestCase(MessageType.SendFileEnd, MessageTypeConverter.SendFileEnd)]
         [TestCase(MessageType.SendFileCancel, MessageTypeConverter.SendFileCancel)]
         [TestCase(MessageType.ReceiveFileInitial, MessageTypeConverter.ReceiveFileInitial)]
-        [TestCase(MessageType.ReciveFileRegular, MessageTypeConverter.ReciveFileRegular)]
+        [TestCase(MessageType.ReceiveFileRegular, MessageTypeConverter.ReceiveFileRegular)]
         [TestCase(MessageType.ReceiveFileEnd, MessageTypeConverter.ReceiveFileEnd)]
         [TestCase(MessageType.ReceiveFileCancel, MessageTypeConverter.ReceiveFileCancel)]
         public void GetMessageType_ValidBuffer_ReturnsValidMessageType(MessageType expectedType, string typeShortName)
