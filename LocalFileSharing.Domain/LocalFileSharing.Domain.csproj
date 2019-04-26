@@ -43,5 +43,11 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LocalFileSharing.Network\LocalFileSharing.Network.csproj">
+      <Project>{02b56641-6ab7-405c-8b08-add596df687c}</Project>
+      <Name>LocalFileSharing.Network</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
