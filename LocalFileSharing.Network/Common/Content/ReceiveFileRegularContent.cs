@@ -2,7 +2,7 @@
 
 namespace LocalFileSharing.Network.Common.Content
 {
-    public class ReceiveFileRegularContent : FileBaseContent
+    public class ReceiveFileRegularContent : FileContent
     {
         public ReceiveFileRegularContent(Guid fileId)
             : base(fileId)

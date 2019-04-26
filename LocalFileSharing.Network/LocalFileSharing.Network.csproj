@@ -34,6 +34,9 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json.Bson, Version=1.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.Bson.1.0.2\lib\net45\Newtonsoft.Json.Bson.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,7 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Content\FileBaseContent.cs" />
+    <Compile Include="Common\Content\FileContent.cs" />
     <Compile Include="Common\Content\ReceiveFileCancelContent.cs" />
     <Compile Include="Common\Content\ReceiveFileEndContent.cs" />
     <Compile Include="Common\Content\ReceiveFileInitialContent.cs" />
@@ -53,6 +56,7 @@
     <Compile Include="Common\Content\SendFileEndContent.cs" />
     <Compile Include="Common\Content\SendFileInitialContent.cs" />
     <Compile Include="Common\Content\SendFileRegularContent.cs" />
+    <Compile Include="Common\FileContentConverter.cs" />
     <Compile Include="Common\MessageTypeConverter.cs" />
     <Compile Include="Content\DemoType.cs" />
     <Compile Include="Common\MessageType.cs" />

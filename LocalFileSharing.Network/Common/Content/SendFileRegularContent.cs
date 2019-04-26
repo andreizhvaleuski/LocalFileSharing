@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LocalFileSharing.Network.Common.Content
 {
-    public class SendFileRegularContent : FileBaseContent
+    public class SendFileRegularContent : FileContent
     {
         public SendFileRegularContent(Guid fileId, byte[] block)
             : base(fileId)

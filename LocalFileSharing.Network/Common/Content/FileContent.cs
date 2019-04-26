@@ -2,11 +2,11 @@
 
 namespace LocalFileSharing.Network.Common.Content
 {
-    public abstract class FileBaseContent
+    public class FileContent
     {
         public Guid FileId { get; private set; }
 
-        public FileBaseContent(Guid fileId)
+        public FileContent(Guid fileId)
         {
             if (fileId == Guid.Empty)
             {

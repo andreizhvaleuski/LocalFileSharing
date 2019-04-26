@@ -2,7 +2,7 @@
 
 namespace LocalFileSharing.Network.Common.Content
 {
-    public class SendFileCancelContent : FileBaseContent
+    public class SendFileCancelContent : FileContent
     {
         public SendFileCancelContent(Guid fileId)
             : base(fileId)
