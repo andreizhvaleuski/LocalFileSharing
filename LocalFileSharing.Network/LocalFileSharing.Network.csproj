@@ -56,7 +56,6 @@
     <Compile Include="Common\MessageTypeConverter.cs" />
     <Compile Include="Content\DemoType.cs" />
     <Compile Include="Common\MessageType.cs" />
-    <Compile Include="Common\Content\IFileContentConverter.cs" />
     <Compile Include="Framing\ILengthPrefixWrapper.cs" />
     <Compile Include="Framing\ITypePrefixWrapper.cs" />
     <Compile Include="Framing\Wrappers\LengthPrefixWrapper.cs" />
