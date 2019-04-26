@@ -45,7 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\Content\FileBaseContent.cs" />
-    <Compile Include="Common\Content\ReceiveFileInitial.cs" />
+    <Compile Include="Common\Content\ReceiveFileCancelContent.cs" />
+    <Compile Include="Common\Content\ReceiveFileEndContent.cs" />
+    <Compile Include="Common\Content\ReceiveFileInitialContent.cs" />
+    <Compile Include="Common\Content\ReceiveFileRegularContent.cs" />
     <Compile Include="Common\Content\SendFileCancelContent.cs" />
     <Compile Include="Common\Content\SendFileEndContent.cs" />
     <Compile Include="Common\Content\SendFileInitialContent.cs" />
