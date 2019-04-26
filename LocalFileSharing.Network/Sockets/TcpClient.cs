@@ -46,7 +46,7 @@ namespace LocalFileSharing.Network.Sockets
             client = connectedClient;
         }
 
-        protected void SendBytes(byte[] buffer)
+        public virtual void SendBytes(byte[] buffer)
         {
             if (buffer is null)
             {
@@ -64,7 +64,7 @@ namespace LocalFileSharing.Network.Sockets
             client.Send(buffer);
         }
 
-        protected byte[] ReceiveBytes(int bytesNumber)
+        public virtual byte[] ReceiveBytes(int bytesNumber)
         {
             if (bytesNumber <= 0)
             {
@@ -94,6 +94,12 @@ namespace LocalFileSharing.Network.Sockets
             } while (totalBytesReceivedNumber != bytesNumber);
 
             return buffer;
+        }
+
+        public virtual void Close()
+        {
+            client.Shutdown(SocketShutdown.Both);
+            client.Close();
         }
     }
 }
