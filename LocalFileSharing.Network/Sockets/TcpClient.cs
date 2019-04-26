@@ -1,13 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-
-using LocalFileSharing.Network.Content;
-using LocalFileSharing.Network.Framing;
 
 namespace LocalFileSharing.Network.Sockets
 {
@@ -15,15 +8,20 @@ namespace LocalFileSharing.Network.Sockets
     {
         protected readonly Socket client;
 
-        public TcpClient(
-            IPEndPoint endPoint,
-            ILengthPrefixWrapper lengthPrefixWrapper,
-            ITypePrefixWrapper typePrefixWrapper
-        ) : base(lengthPrefixWrapper, typePrefixWrapper)
+        public TcpClient(IPAddress ipAddress, int port)
         {
-            if (endPoint is null)
+            if (ipAddress is null)
             {
-                throw new ArgumentNullException(nameof(endPoint));
+                throw new ArgumentNullException(nameof(ipAddress));
+            }
+
+            if (port >= MinAllowedPort && port <= MaxAllowedPort)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(port),
+                    port,
+                    $"The port have to be between {MinAllowedPort} and {MaxAllowedPort}."
+                );
             }
 
             client = new Socket(
@@ -31,78 +29,71 @@ namespace LocalFileSharing.Network.Sockets
                 SocketType.Stream,
                 ProtocolType.Tcp
             );
-            client.Connect(endPoint);
+            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, port);
+            client.Connect(ipEndPoint);
         }
 
-        public void StartReceiveMessages()
+        public TcpClient(Socket connectedClient)
         {
-            while (true)
+            if (!connectedClient.Connected)
             {
-                byte[] lengthBuffer = ReceiveBytes(4);
-                int length = BitConverter.ToInt32(lengthBuffer, 0);
-                byte[] buffer = ReceiveBytes(length);
-                DemoType type = (DemoType)BytesToObject(buffer);
-                Console.WriteLine($"FileName: {type.FileName}; BlockNumber: {type.BlocksNumber}");
-            }
-        }
-
-        protected int ReceiveMessageLength()
-        {
-            byte[] messageLengthBuffer = ReceiveBytes(4);
-            int messageLength = BitConverter.ToInt32(messageLengthBuffer, 0);
-            return messageLength;
-        }
-
-        protected string ReceiveMessageType()
-        {
-            byte[] messageTypeBuffer = ReceiveBytes(4);
-            string messageType = Encoding.Unicode.GetString(messageTypeBuffer);
-            return messageType;
-        }
-
-        protected byte[] ReceiveBytes(int count)
-        {
-            if (count <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(count));
-            }
-
-            byte[] buffer = new byte[count];
-            int totalReceivedBytesNumber = 0;
-            do
-            {
-                int bytesReceivedNumber = client.Receive(
-                    buffer,
-                    totalReceivedBytesNumber,
-                    count - totalReceivedBytesNumber,
-                    SocketFlags.None
+                throw new ArgumentException(
+                    $"The client is not connected.",
+                    nameof(connectedClient)
                 );
-                if (bytesReceivedNumber <= 0)
-                {
-                    return null;
-                }
-                totalReceivedBytesNumber += bytesReceivedNumber;
-            } while (totalReceivedBytesNumber < count);
+            }
 
-            return buffer;
+            client = connectedClient;
         }
 
-        protected object BytesToObject(byte[] buffer)
+        protected void SendBytes(byte[] buffer)
         {
             if (buffer is null)
             {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
-            IFormatter formatter = new BinaryFormatter();
-
-            object deserializedObj = null;
-            using (MemoryStream stream = new MemoryStream(buffer))
+            if (buffer.Length == 0)
             {
-                deserializedObj = formatter.Deserialize(stream);
+                throw new ArgumentException(
+                    $"The buffer cannot be empty.",
+                    nameof(buffer)
+                );
             }
 
-            return deserializedObj;
+            client.Send(buffer);
+        }
+
+        protected byte[] ReceiveBytes(int bytesNumber)
+        {
+            if (bytesNumber <= 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    $"The bytes number must be greater than zero.",
+                    nameof(bytesNumber)
+                );
+            }
+
+            byte[] buffer = new byte[bytesNumber];
+            int totalBytesReceivedNumber = 0;
+            do
+            {
+                int currentBytesReceivedNumber= client.Receive(
+                    buffer,
+                    totalBytesReceivedNumber,
+                    bytesNumber - totalBytesReceivedNumber,
+                    SocketFlags.None
+                );
+
+                if (currentBytesReceivedNumber <= 0)
+                {
+                    return null;
+                }
+
+                totalBytesReceivedNumber += currentBytesReceivedNumber;
+            } while (totalBytesReceivedNumber != bytesNumber);
+
+            return buffer;
         }
     }
 }
