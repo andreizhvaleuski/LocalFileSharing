@@ -1,36 +1,19 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading;
-
-using LocalFileSharing.Network.Content;
-using LocalFileSharing.Network.Framing;
 
 namespace LocalFileSharing.Network.Sockets
 {
     public class TcpServer : TcpSocketBase
     {
-        public const int MinAllowedPort = 61001;
-
-        public const int MaxAllowedPort = 65535;
-
         protected readonly Socket listener;
+        protected TcpClient connectedClient;
 
-        protected Socket connectedClient;
-
-        public TcpServer(
-            IPAddress localIPAddress, 
-            int port,
-            ILengthPrefixWrapper lengthPrefixWrapper,
-            ITypePrefixWrapper typePrefixWrapper
-        ) : base(lengthPrefixWrapper, typePrefixWrapper)
+        public TcpServer(IPAddress ipAddress, int port)
         {
-            if (localIPAddress is null)
+            if (ipAddress is null)
             {
-                throw new ArgumentNullException(nameof(localIPAddress));
+                throw new ArgumentNullException(nameof(ipAddress));
             }
 
             if (port >= MinAllowedPort && port <= MaxAllowedPort)
@@ -38,7 +21,7 @@ namespace LocalFileSharing.Network.Sockets
                 throw new ArgumentOutOfRangeException(
                     nameof(port),
                     port,
-                    $"Port number have to be between {MinAllowedPort} and {MaxAllowedPort}."
+                    $"The port have to be between {MinAllowedPort} and {MaxAllowedPort}."
                 );
             }
 
@@ -47,52 +30,29 @@ namespace LocalFileSharing.Network.Sockets
                 SocketType.Stream,
                 ProtocolType.Tcp
             );
-            listener.Bind(new IPEndPoint(localIPAddress, port));
+            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, port);
+            listener.Bind(ipEndPoint);
         }
 
-        public void StartListening()
+        public void StartListening(int backlog)
         {
-            listener.Listen(1);
+            listener.Listen(backlog);
+        }
 
-            connectedClient = listener.Accept();
+        public TcpClient AcceptTcpClient()
+        {
+            Socket acceptedClient = listener.Accept();
+            connectedClient = new TcpClient(acceptedClient);
+
+            return connectedClient;
         }
 
         public void StopListening()
         {
             connectedClient?.Close();
+
+            listener.Shutdown(SocketShutdown.Both);
             listener.Close();
-        }
-
-        public void StartSendingMessages()
-        {
-            while (true)
-            {
-                Thread.Sleep(2000);
-                DemoType type = new DemoType()
-                {
-                    FileName = DateTime.Now.ToLongTimeString(),
-                    BlocksNumber = DateTime.Now.Ticks
-                };
-                SendObject(type);
-            }
-        }
-
-        public void SendObject(object obj)
-        {
-            if (obj is null)
-            {
-                throw new ArgumentNullException(nameof(obj));
-            }
-
-            IFormatter formatter = new BinaryFormatter();
-
-            byte[] buffer = null;
-            using (MemoryStream stream = new MemoryStream())
-            {
-                formatter.Serialize(stream, obj);
-                buffer = stream.ToArray();
-            }
-            //connectedClient.Send(MessageFraming.WrapMessage(buffer));
         }
     }
 }
