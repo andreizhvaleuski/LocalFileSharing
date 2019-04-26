@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalFileSharing.ConsoleSer
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalFileSharing.ConsoleClientDemo", "LocalFileSharing.ConsoleClientDemo\LocalFileSharing.ConsoleClientDemo.csproj", "{0E2F6D85-50B3-4862-B9D3-61934ACA120B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalFileSharing.UnitTests", "LocalFileSharing.UnitTests\LocalFileSharing.UnitTests.csproj", "{8A52E683-638A-4951-B68A-A3476FA8158A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalFileSharing.UnitTests", "LocalFileSharing.UnitTests\LocalFileSharing.UnitTests.csproj", "{8A52E683-638A-4951-B68A-A3476FA8158A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

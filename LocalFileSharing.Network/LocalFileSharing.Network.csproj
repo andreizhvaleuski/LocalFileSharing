@@ -44,7 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Content\FileBaseContent.cs" />
+    <Compile Include="Common\Content\SendFileEndContent.cs" />
     <Compile Include="Common\Content\SendFileInitContent.cs" />
+    <Compile Include="Common\Content\SendFileRegularContent.cs" />
     <Compile Include="Common\MessageTypeConverter.cs" />
     <Compile Include="Content\DemoType.cs" />
     <Compile Include="Common\MessageType.cs" />
