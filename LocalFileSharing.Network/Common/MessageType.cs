@@ -8,8 +8,8 @@
         SendFileRegular = 3,
         SendFileEnd = 4,
         SendFileCancel = 5,
-        ReceiveFileInitialize = 6,
-        ReciveFileRegular = 7,
+        ReceiveFileInitial = 6,
+        ReceiveFileRegular = 7,
         ReceiveFileEnd = 8,
         ReceiveFileCancel = 9
     }
