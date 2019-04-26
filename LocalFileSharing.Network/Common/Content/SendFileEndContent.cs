@@ -1,7 +1,12 @@
-﻿namespace LocalFileSharing.Network.Common.Content
+﻿using System;
+
+namespace LocalFileSharing.Network.Common.Content
 {
-    public class SendFileEndContent
+    public class SendFileEndContent : FileBaseContent
     {
-        public string 
+        public SendFileEndContent(Guid fileId)
+            : base(fileId)
+        {
+        }
     }
 }
