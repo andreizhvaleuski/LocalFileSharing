@@ -57,7 +57,7 @@ namespace LocalFileSharing.UnitTests.Network
 
         [TestCase(sizeof(int) - 1)]
         [TestCase(0)]
-        public void GetLengthPrefixValue_BufferWithInvalidLength_ThrowsArgumentNullException(int wrappedBufferLength)
+        public void GetLengthPrefixValue_BufferWithInvalidLength_ThrowsArgumentException(int wrappedBufferLength)
         {
             byte[] wrappedBuffer = new byte[wrappedBufferLength];
 
