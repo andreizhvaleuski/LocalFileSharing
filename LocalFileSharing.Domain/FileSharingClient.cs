@@ -299,13 +299,13 @@ namespace LocalFileSharing.Domain
                         fileData.FileSha256Hash = initialContent.Sha256FileHash.ToArray();
                         fileData.FilePath = Path.Combine(downloadDirectory, initialContent.FileName);
 
-                        stream = new BinaryWriter(File.OpenWrite(fileData.FilePath));
+                        stream = new BinaryWriter(File.Open(fileData.FilePath, FileMode.Truncate));
 
                         report.ReceiveFileState = ReceiveFileState.Initializing;
                         report.FileData = fileData;
                         progress.Report(report);
 
-                        SendResponse(Guid.NewGuid(), ResponseType.ReceiveFileInitial);
+                        SendResponse(fileData.FileId, ResponseType.ReceiveFileInitial);
 
                         initialized = true;
                     }
