@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-
+using System.Threading.Tasks;
 using LocalFileSharing.Domain.Infrastructure;
 using LocalFileSharing.Network.Common;
 using LocalFileSharing.Network.Common.Content;
@@ -13,7 +13,7 @@ namespace LocalFileSharing.Domain
 {
     public sealed class FileSharingClient
     {
-        public const int BlockBufferSize = 8192;
+        public const int BlockBufferSize = 512_000;
 
         private readonly ILengthPrefixWrapper lengthPrefixWrapper;
         private readonly ITypePrefixWrapper typePrefixWrapper;
@@ -37,6 +37,82 @@ namespace LocalFileSharing.Domain
             lengthPrefixWrapper = new LengthPrefixWrapper();
             typePrefixWrapper = new TypePrefixWrapper();
             fileHash = new SHA256FileHash();
+        }
+
+        public async Task SendFileAsync(string path, IProgress<SendFileProgressReport> progress)
+        {
+            await Task.Run(() =>
+            {
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    throw new ArgumentException(
+                        "The path must be provided.",
+                        nameof(path)
+                    );
+                }
+
+                if (!File.Exists(path))
+                {
+                    throw new FileNotFoundException($"File was not found: { path }.", path);
+                }
+
+                FileInfo fileInfo = new FileInfo(path);
+                string fileName = fileInfo.Name;
+                long fileSize = fileInfo.Length;
+                Guid fileId = Guid.NewGuid();
+                byte[] sha256Hash = fileHash.ComputeHash(path);
+
+                FileInitialContent initialContent =
+                    new FileInitialContent(fileId, fileName, fileSize, sha256Hash);
+                SendFileInitialContent(initialContent);
+
+                ResponseType responseToInitial = ReceiveResponse();
+                if (responseToInitial == ResponseType.ReceiveFileCancel)
+                {
+                    return;
+                }
+                else if (responseToInitial != ResponseType.ReceiveFileInitial)
+                {
+                    throw new ArgumentException();
+                }
+
+                using (BinaryReader stream = new BinaryReader(File.OpenRead(path)))
+                {
+                    byte[] fileBuffer = new byte[BlockBufferSize];
+                    do
+                    {
+                        int bytesReadNumber = stream.Read(fileBuffer, 0, fileBuffer.Length);
+                        if (bytesReadNumber == 0)
+                        {
+                            break;
+                        }
+                        SendRegularContent(Guid.NewGuid(), fileBuffer, bytesReadNumber);
+
+                        ResponseType responseToRegular = ReceiveResponse();
+                        if (responseToRegular == ResponseType.ReceiveFileCancel)
+                        {
+                            break;
+                        }
+                        else if (responseToRegular != ResponseType.ReceiveFileRegular)
+                        {
+                            throw new ArgumentException();
+                        }
+                    } while (true);
+                }
+
+                FileEndContent endContent = new FileEndContent(Guid.NewGuid());
+                SendFileEndContent(endContent);
+
+                ResponseType responseToEnd = ReceiveResponse();
+                if (responseToEnd == ResponseType.ReceiveFileCancel)
+                {
+                    return;
+                }
+                else if (responseToEnd != ResponseType.ReceiveFileEnd)
+                {
+                    throw new Exception();
+                }
+            });
         }
 
         public void SendFile(string path)
