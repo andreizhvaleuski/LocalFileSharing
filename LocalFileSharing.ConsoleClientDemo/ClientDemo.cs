@@ -8,7 +8,7 @@ namespace LocalFileSharing.ConsoleClientDemo
 {
     class ClientDemo
     {
-        static CancellationTokenSource tokenSource;
+        static CancellationTokenSource tokenSource = new CancellationTokenSource();
 
         static void Main(string[] args)
         {
