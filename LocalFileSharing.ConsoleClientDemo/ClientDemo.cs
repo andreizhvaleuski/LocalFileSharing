@@ -19,7 +19,7 @@ namespace LocalFileSharing.ConsoleClientDemo
 
         static async void Start()
         {
-            FileSharingClient fileSharing = new FileSharingClient(IPAddress.Loopback, 60000);
+            FileSharingClient fileSharing = new FileSharingClient(IPAddress.Parse("192.168.100.164"), 60000);
 
             var progress = new Progress<ReceiveFileProgressReport>();
             progress.ProgressChanged += ProgressReport;
