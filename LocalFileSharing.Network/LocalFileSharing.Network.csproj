@@ -47,18 +47,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Content\FileContent.cs" />
-    <Compile Include="Common\Content\ReceiveFileCancelContent.cs" />
-    <Compile Include="Common\Content\ReceiveFileEndContent.cs" />
-    <Compile Include="Common\Content\ReceiveFileInitialContent.cs" />
-    <Compile Include="Common\Content\ReceiveFileRegularContent.cs" />
-    <Compile Include="Common\Content\SendFileCancelContent.cs" />
-    <Compile Include="Common\Content\SendFileEndContent.cs" />
-    <Compile Include="Common\Content\SendFileInitialContent.cs" />
-    <Compile Include="Common\Content\SendFileRegularContent.cs" />
-    <Compile Include="Common\FileContentConverter.cs" />
+    <Compile Include="Common\Content\FileBaseContent.cs" />
+    <Compile Include="Common\Content\ResponseContent.cs" />
+    <Compile Include="Common\Content\FileCancelContent.cs" />
+    <Compile Include="Common\Content\FileEndContent.cs" />
+    <Compile Include="Common\Content\FileInitialContent.cs" />
+    <Compile Include="Common\Content\FileRegularContent.cs" />
+    <Compile Include="Common\ContentConverter.cs" />
     <Compile Include="Common\MessageTypeConverter.cs" />
     <Compile Include="Common\MessageType.cs" />
+    <Compile Include="Common\ResponseType.cs" />
     <Compile Include="Framing\ILengthPrefixWrapper.cs" />
     <Compile Include="Framing\ITypePrefixWrapper.cs" />
     <Compile Include="Framing\Wrappers\LengthPrefixWrapper.cs" />

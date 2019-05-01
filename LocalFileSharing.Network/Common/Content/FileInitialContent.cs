@@ -3,9 +3,10 @@ using System.Collections.Generic;
 
 namespace LocalFileSharing.Network.Common.Content
 {
-    public class SendFileInitialContent : FileContent
+    [Serializable]
+    public class FileInitialContent : FileBaseContent
     {
-        public SendFileInitialContent(Guid fileId, string fileName, long fileSize, byte[] sha256FileHash)
+        public FileInitialContent(Guid fileId, string fileName, long fileSize, byte[] sha256FileHash)
             : base(fileId)
         {
             if (string.IsNullOrWhiteSpace(fileName))
@@ -41,6 +42,10 @@ namespace LocalFileSharing.Network.Common.Content
             FileSize = fileSize;
             Sha256FileHash = sha256FileHash;
         }
+
+        public FileInitialContent(string fileName, long fileSize, byte[] sha256FileHash)
+            : this(Guid.NewGuid(), fileName, fileSize, sha256FileHash)
+        { }
 
         public string FileName { get; private set; }
 

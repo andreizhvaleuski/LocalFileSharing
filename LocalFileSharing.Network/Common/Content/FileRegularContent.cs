@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace LocalFileSharing.Network.Common.Content
 {
-    public class SendFileRegularContent : FileContent
+    [Serializable]
+    public class FileRegularContent : FileBaseContent
     {
-        public SendFileRegularContent(Guid fileId, byte[] block)
+        public FileRegularContent(Guid fileId, byte[] block)
             : base(fileId)
         {
             if (block is null)
@@ -24,6 +24,6 @@ namespace LocalFileSharing.Network.Common.Content
             Block = block;
         }
 
-        public IReadOnlyCollection<byte> Block { get; private set; }
+        public byte[] Block { get; private set; }
     }
 }

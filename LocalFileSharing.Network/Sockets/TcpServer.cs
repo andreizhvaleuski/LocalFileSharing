@@ -51,7 +51,7 @@ namespace LocalFileSharing.Network.Sockets
         {
             connectedClient?.Close();
 
-            listener.Shutdown(SocketShutdown.Both);
+            //listener.Shutdown(SocketShutdown.Both);
             listener.Close();
         }
     }

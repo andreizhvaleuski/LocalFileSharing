@@ -1,6 +1,5 @@
 ﻿using System.Net;
-
-using LocalFileSharing.Network.Sockets;
+using LocalFileSharing.Domain;
 
 namespace LocalFileSharing.ConsoleClientDemo
 {
@@ -8,13 +7,9 @@ namespace LocalFileSharing.ConsoleClientDemo
     {
         static void Main(string[] args)
         {
-            //TcpClient client = new TcpClient(
-            //    new IPEndPoint(
-            //        IPAddress.Loopback,
-            //        60000
-            //));
+            FileSharingClient fileSharing = new FileSharingClient(IPAddress.Loopback, 60000);
 
-            //client.StartReceiveMessages();
+            fileSharing.ReceiveFile(@"D:\");
         }
     }
 }

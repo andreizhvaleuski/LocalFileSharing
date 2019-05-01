@@ -59,6 +59,8 @@ namespace LocalFileSharing.UnitTests.Network
         [TestCase(MessageType.SendFileEnd)]
         [TestCase(MessageType.SendFileRegular)]
         [TestCase(MessageType.SendFileInitial)]
+        [TestCase(MessageType.SendFileCancel)]
+        [TestCase(MessageType.Response)]
         public void GetTypePrefixValue_ValidBuffer_ReturnsMessageType(MessageType expectedType)
         {
             byte[] wrappedBuffer = new byte[typePrefixWrapper.TypePrefixSize];

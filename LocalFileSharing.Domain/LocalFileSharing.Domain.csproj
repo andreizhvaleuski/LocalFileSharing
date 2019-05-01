@@ -41,6 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FileSharingClient.cs" />
+    <Compile Include="ClientServerFacade.cs" />
+    <Compile Include="Infrastructure\IFileHash.cs" />
+    <Compile Include="Infrastructure\SHA256FileHash.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

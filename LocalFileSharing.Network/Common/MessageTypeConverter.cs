@@ -12,10 +12,7 @@ namespace LocalFileSharing.Network.Common
         public const string SendFileRegular = "SFR";
         public const string SendFileEnd = "SFE";
         public const string SendFileCancel = "SFC";
-        public const string ReceiveFileInitial = "RFI";
-        public const string ReceiveFileRegular = "RFR";
-        public const string ReceiveFileEnd = "RFE";
-        public const string ReceiveFileCancel = "RFC";
+        public const string Response = "RSP";
 
         public static byte[] GetBytes(MessageType type)
         {
@@ -41,21 +38,9 @@ namespace LocalFileSharing.Network.Common
             {
                 typeBuffer = Encoding.Unicode.GetBytes(SendFileCancel);
             }
-            else if (type == MessageType.ReceiveFileInitial)
+            else if (type == MessageType.Response)
             {
-                typeBuffer = Encoding.Unicode.GetBytes(ReceiveFileInitial);
-            }
-            else if (type == MessageType.ReceiveFileRegular)
-            {
-                typeBuffer = Encoding.Unicode.GetBytes(ReceiveFileRegular);
-            }
-            else if (type == MessageType.ReceiveFileEnd)
-            {
-                typeBuffer = Encoding.Unicode.GetBytes(ReceiveFileEnd);
-            }
-            else if (type == MessageType.ReceiveFileCancel)
-            {
-                typeBuffer = Encoding.Unicode.GetBytes(ReceiveFileCancel);
+                typeBuffer = Encoding.Unicode.GetBytes(Response);
             }
 
             return typeBuffer;
@@ -99,21 +84,9 @@ namespace LocalFileSharing.Network.Common
             {
                 type = MessageType.SendFileCancel;
             }
-            else if (message.Equals(ReceiveFileInitial, StringComparison.InvariantCultureIgnoreCase))
+            else if (message.Equals(Response, StringComparison.InvariantCultureIgnoreCase))
             {
-                type = MessageType.ReceiveFileInitial;
-            }
-            else if (message.Equals(ReceiveFileRegular, StringComparison.InvariantCultureIgnoreCase))
-            {
-                type = MessageType.ReceiveFileRegular;
-            }
-            else if (message.Equals(ReceiveFileEnd, StringComparison.InvariantCultureIgnoreCase))
-            {
-                type = MessageType.ReceiveFileEnd;
-            }
-            else if (message.Equals(ReceiveFileCancel, StringComparison.InvariantCultureIgnoreCase))
-            {
-                type = MessageType.ReceiveFileCancel;
+                type = MessageType.Response;
             }
 
             return type;

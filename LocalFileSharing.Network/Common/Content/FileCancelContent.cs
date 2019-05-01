@@ -2,9 +2,10 @@
 
 namespace LocalFileSharing.Network.Common.Content
 {
-    public class ReceiveFileEndContent : FileContent
+    [Serializable]
+    public class FileCancelContent : FileBaseContent
     {
-        public ReceiveFileEndContent(Guid fileId)
+        public FileCancelContent(Guid fileId)
             : base(fileId)
         {
         }
