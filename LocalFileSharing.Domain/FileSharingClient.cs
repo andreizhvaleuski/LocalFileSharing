@@ -7,6 +7,7 @@ using LocalFileSharing.Network.Sockets;
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -267,7 +268,7 @@ namespace LocalFileSharing.Domain
 
         public async Task ReceiveFileAsync(
             string downloadDirectory,
-            IProgress<> report,
+            IProgress<ReceiveFileProgressReport> progress,
             CancellationToken cancellationToken
         ) {
             if (string.IsNullOrWhiteSpace(downloadDirectory))
@@ -278,10 +279,12 @@ namespace LocalFileSharing.Domain
             await Task.Run(() => 
             {
                 FileData fileData = new FileData();
+                ReceiveFileProgressReport report = new ReceiveFileProgressReport();
 
                 bool initialized = false;
+                bool received = true;
                 string fileName = string.Empty;
-                FileStream stream = null;
+                BinaryWriter stream = null;
                 do
                 {
                     int length = ReceiveLength();
@@ -289,26 +292,43 @@ namespace LocalFileSharing.Domain
                     UnwrapMessageData(buffer, out MessageType type, out FileBaseContent content);
                     if (type == MessageType.SendFileInitial)
                     {
-                        FileInitialContent inititalContent = (FileInitialContent)content;
-                        initialized = true;
-                        fileName = inititalContent.FileName;
-                        stream = File.OpenWrite(Path.Combine(downloadDirectory, fileName));
+                        FileInitialContent initialContent = (FileInitialContent)content;
+
+                        fileData.FileId = initialContent.FileId;
+                        fileData.FileSize = initialContent.FileSize;
+                        fileData.FileSha256Hash = initialContent.Sha256FileHash.ToArray();
+                        fileData.FilePath = Path.Combine(downloadDirectory, initialContent.FileName);
+
+                        stream = new BinaryWriter(File.OpenWrite(fileData.FilePath));
+
+                        report.ReceiveFileState = ReceiveFileState.Initializing;
+                        report.FileData = fileData;
+                        progress.Report(report);
 
                         SendResponse(Guid.NewGuid(), ResponseType.ReceiveFileInitial);
+
+                        initialized = true;
                     }
                     else if (type == MessageType.SendFileRegular && initialized)
                     {
                         FileRegularContent regularContent = (FileRegularContent)content;
                         stream.Write(regularContent.Block, 0, regularContent.Block.Length);
 
-                        SendResponse(Guid.NewGuid(), ResponseType.ReceiveFileRegular);
+                        report.ReceiveFileState = ReceiveFileState.Sending;
+                        report.BytesRecived += regularContent.Block.Length;
+                        progress.Report(report);
+
+                        SendResponse(fileData.FileId, ResponseType.ReceiveFileRegular);
                     }
                     else if (type == MessageType.SendFileEnd && initialized)
                     {
                         //SendFileEndContent initialContent = (SendFileEndContent)content;
+                        received = true;
 
-                        SendResponse(Guid.NewGuid(), ResponseType.ReceiveFileEnd);
+                        report.ReceiveFileState = ReceiveFileState.Ending;
+                        progress.Report(report);
 
+                        SendResponse(fileData.FileId, ResponseType.ReceiveFileEnd);
                         break;
                     }
                     else if (type == MessageType.SendFileCancel && initialized)
@@ -316,11 +336,41 @@ namespace LocalFileSharing.Domain
                         //SendFileCancelContent initialContent = (SendFileCancelContent)content;
                         File.Delete(Path.Combine(downloadDirectory, fileName));
 
-                        SendResponse(Guid.NewGuid(), ResponseType.ReceiveFileCancel);
+                        report.ReceiveFileState = ReceiveFileState.Cancelled;
+                        progress.Report(report);
+
+                        SendResponse(fileData.FileId, ResponseType.ReceiveFileCancel);
+                        break;
+                    }
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        report.ReceiveFileState = ReceiveFileState.Cancelled;
+                        progress.Report(report);
                         break;
                     }
                 } while (true);
                 stream?.Close();
+
+                if (!received)
+                {
+                    return;
+                }
+
+                report.ReceiveFileState = ReceiveFileState.Hashing;
+                progress.Report(report);
+                byte[] receivedFileSha256Hash = fileHash.ComputeHash(fileData.FilePath);
+
+                if (fileData.FileSha256Hash.SequenceEqual(receivedFileSha256Hash))
+                {
+                    report.ReceiveFileState = ReceiveFileState.Failed;
+                    progress.Report(report);
+                }
+
+                report.ReceiveFileState = ReceiveFileState.HashChecked;
+                progress.Report(report);
+
+                report.ReceiveFileState = ReceiveFileState.Completed;
+                progress.Report(report);
             });
         }
 
