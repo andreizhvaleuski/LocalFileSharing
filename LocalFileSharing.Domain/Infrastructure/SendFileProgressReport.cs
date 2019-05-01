@@ -2,9 +2,9 @@
 {
     public class SendFileProgressReport
     {
-        public SendFileState SendFileState { get; private set; }
+        public SendFileState SendFileState { get; set; }
 
-        public FileData FileData { get; private set; }
+        public FileData FileData { get; set; }
 
         public long BytesSent { get; set; }
     }

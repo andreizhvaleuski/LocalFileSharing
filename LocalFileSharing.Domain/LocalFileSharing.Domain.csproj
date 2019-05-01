@@ -44,6 +44,7 @@
     <Compile Include="FileSharingClient.cs" />
     <Compile Include="ClientServerFacade.cs" />
     <Compile Include="Infrastructure\FileData.cs" />
+    <Compile Include="Infrastructure\ReceiveFileState.cs" />
     <Compile Include="Infrastructure\SendFileProgressReport.cs" />
     <Compile Include="Infrastructure\IFileHash.cs" />
     <Compile Include="Infrastructure\SendFileState.cs" />

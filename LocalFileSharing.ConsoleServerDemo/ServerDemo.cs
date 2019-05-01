@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Net;
+using System.Threading;
 using LocalFileSharing.Domain;
+using LocalFileSharing.Domain.Infrastructure;
 using LocalFileSharing.Network.Sockets;
 
 namespace LocalFileSharing.ConsoleServerDemo
 {
     class ServerDemo
     {
-        const string Path = @"D:\Downloads\Torrents\Series\Game of Thrones - Игра престолов. Сезон 8. Amedia. 1080p\Game.of.Thrones.s08e01.WEB-DL.1080p.Amedia.mkv";
+        readonly static CancellationTokenSource cancellationSource = new CancellationTokenSource();
+
+        const string Path = @"D:\Downloads\stephen-king.jpg";
 
         static void Main(string[] args)
         {
             Start();
+
             while (true) ;
         }
 
@@ -26,10 +31,28 @@ namespace LocalFileSharing.ConsoleServerDemo
             TcpClient client = server.AcceptTcpClient();
             FileSharingClient fileSharing = new FileSharingClient(client);
             Console.WriteLine("Sending...");
-            await fileSharing.SendFileAsync(Path, null);
+            var progress = new Progress<SendFileProgressReport>();
+            progress.ProgressChanged += ProgressReport;
+            await fileSharing.SendFileAsync(Path, progress, cancellationSource.Token);
             Console.WriteLine("Completed");
             server.StopListening();
             Console.WriteLine("Stopped");
+        }
+
+        private static void ProgressReport(object sender, SendFileProgressReport e)
+        {
+            if (e.SendFileState == SendFileState.Initializing)
+            {
+                Console.WriteLine($"{e.SendFileState} :: {e.FileData.FileId} :: {e.FileData.FilePath} :: {e.FileData.FileSize}");
+            }
+            else if (e.SendFileState == SendFileState.Hashing)
+            {
+                Console.WriteLine($"{e.SendFileState} :: {e?.FileData.FileSha256Hash}");
+            }
+            else
+            {
+                Console.WriteLine($"{e.SendFileState} :: {e?.BytesSent}");
+            }
         }
     }
 }
