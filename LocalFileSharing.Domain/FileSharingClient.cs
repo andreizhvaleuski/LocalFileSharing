@@ -279,12 +279,12 @@ namespace LocalFileSharing.Domain
             await Task.Run(() => 
             {
                 FileData fileData = new FileData();
-                ReceiveFileProgressReport report = new ReceiveFileProgressReport();
 
                 bool initialized = false;
                 bool received = true;
                 string fileName = string.Empty;
                 BinaryWriter stream = null;
+                long bytesReceived = 0;
                 do
                 {
                     int length = ReceiveLength();
@@ -301,8 +301,11 @@ namespace LocalFileSharing.Domain
 
                         stream = new BinaryWriter(File.Open(fileData.FilePath, FileMode.Truncate));
 
-                        report.ReceiveFileState = ReceiveFileState.Initializing;
-                        report.FileData = fileData;
+                        ReceiveFileProgressReport report = new ReceiveFileProgressReport
+                        {
+                            ReceiveFileState = ReceiveFileState.Initializing,
+                            FileData = fileData
+                        };
                         progress.Report(report);
 
                         SendResponse(fileData.FileId, ResponseType.ReceiveFileInitial);
@@ -313,9 +316,14 @@ namespace LocalFileSharing.Domain
                     {
                         FileRegularContent regularContent = (FileRegularContent)content;
                         stream.Write(regularContent.Block, 0, regularContent.Block.Length);
+                        bytesReceived += regularContent.Block.Length;
 
-                        report.ReceiveFileState = ReceiveFileState.Sending;
-                        report.BytesRecived += regularContent.Block.Length;
+                        ReceiveFileProgressReport report = new ReceiveFileProgressReport
+                        {
+                            ReceiveFileState = ReceiveFileState.Sending,
+                            FileData = fileData,
+                            BytesRecived = bytesReceived
+                        };
                         progress.Report(report);
 
                         SendResponse(fileData.FileId, ResponseType.ReceiveFileRegular);
@@ -325,7 +333,11 @@ namespace LocalFileSharing.Domain
                         //SendFileEndContent initialContent = (SendFileEndContent)content;
                         received = true;
 
-                        report.ReceiveFileState = ReceiveFileState.Ending;
+                        ReceiveFileProgressReport report = new ReceiveFileProgressReport
+                        {
+                            ReceiveFileState = ReceiveFileState.Ending,
+                            FileData = fileData
+                        };
                         progress.Report(report);
 
                         SendResponse(fileData.FileId, ResponseType.ReceiveFileEnd);
@@ -335,8 +347,11 @@ namespace LocalFileSharing.Domain
                     {
                         //SendFileCancelContent initialContent = (SendFileCancelContent)content;
                         File.Delete(Path.Combine(downloadDirectory, fileName));
-
-                        report.ReceiveFileState = ReceiveFileState.Cancelled;
+                        ReceiveFileProgressReport report = new ReceiveFileProgressReport
+                        {
+                            ReceiveFileState = ReceiveFileState.Cancelled,
+                            FileData = fileData
+                        };
                         progress.Report(report);
 
                         SendResponse(fileData.FileId, ResponseType.ReceiveFileCancel);
@@ -344,7 +359,11 @@ namespace LocalFileSharing.Domain
                     }
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        report.ReceiveFileState = ReceiveFileState.Cancelled;
+                        ReceiveFileProgressReport report = new ReceiveFileProgressReport
+                        {
+                            ReceiveFileState = ReceiveFileState.Cancelled,
+                            FileData = fileData
+                        };
                         progress.Report(report);
                         break;
                     }
@@ -355,22 +374,43 @@ namespace LocalFileSharing.Domain
                 {
                     return;
                 }
-
-                report.ReceiveFileState = ReceiveFileState.Hashing;
-                progress.Report(report);
+                {
+                    ReceiveFileProgressReport report = new ReceiveFileProgressReport
+                    {
+                        ReceiveFileState = ReceiveFileState.Hashing,
+                        FileData = fileData
+                    };
+                    progress.Report(report);
+                }
                 byte[] receivedFileSha256Hash = fileHash.ComputeHash(fileData.FilePath);
 
                 if (fileData.FileSha256Hash.SequenceEqual(receivedFileSha256Hash))
                 {
-                    report.ReceiveFileState = ReceiveFileState.Failed;
+                    ReceiveFileProgressReport report = new ReceiveFileProgressReport
+                    {
+                        ReceiveFileState = ReceiveFileState.Failed,
+                        FileData = fileData
+                    };
                     progress.Report(report);
                 }
 
-                report.ReceiveFileState = ReceiveFileState.HashChecked;
-                progress.Report(report);
+                {
+                    ReceiveFileProgressReport report = new ReceiveFileProgressReport
+                    {
+                        ReceiveFileState = ReceiveFileState.Cancelled,
+                        FileData = fileData
+                    };
+                    progress.Report(report);
+                }
 
-                report.ReceiveFileState = ReceiveFileState.Completed;
-                progress.Report(report);
+                {
+                    ReceiveFileProgressReport report = new ReceiveFileProgressReport
+                    {
+                        ReceiveFileState = ReceiveFileState.Completed,
+                        FileData = fileData
+                    };
+                    progress.Report(report);
+                }
             });
         }
 
