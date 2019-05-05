@@ -1,4 +1,6 @@
-﻿using Caliburn.Micro;
+﻿using System.Windows;
+using Caliburn.Micro;
+using LocalFileSharing.DesktopUI.ViewModels;
 
 namespace LocalFileSharing.DesktopUI
 {
@@ -7,6 +9,11 @@ namespace LocalFileSharing.DesktopUI
         public Bootstrapper()
         {
             Initialize();
+        }
+
+        protected override void OnStartup(object sender, StartupEventArgs e)
+        {
+            DisplayRootViewFor<ShellViewModel>();
         }
     }
 }
