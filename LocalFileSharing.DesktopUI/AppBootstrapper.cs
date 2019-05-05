@@ -11,11 +11,11 @@ using Unity;
 
 namespace LocalFileSharing.DesktopUI
 {
-    public class Bootstrapper : BootstrapperBase
+    public class AppBootstrapper : BootstrapperBase
     {
         private IUnityContainer _container;
 
-        public Bootstrapper()
+        public AppBootstrapper()
         {
             Initialize();
         }

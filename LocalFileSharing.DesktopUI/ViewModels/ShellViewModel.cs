@@ -1,9 +1,10 @@
-﻿using Caliburn.Micro;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+
+using Caliburn.Micro;
 
 namespace LocalFileSharing.DesktopUI.ViewModels
 {
-    public class ShellViewModel : Screen
+    public class ShellViewModel : Conductor<Screen>
     {
         public ShellViewModel()
         {
