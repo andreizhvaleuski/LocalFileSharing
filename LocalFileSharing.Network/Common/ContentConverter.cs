@@ -23,26 +23,6 @@ namespace LocalFileSharing.Network.Common {
             return buffer;
         }
 
-        public static FileInitialContent GetSendFileInitialContent(byte[] contentBuffer) {
-            return GetContent(contentBuffer) as FileInitialContent;
-        }
-
-        public static FileRegularContent GetSendFileRegularContent(byte[] contentBuffer) {
-            return GetContent(contentBuffer) as FileRegularContent;
-        }
-
-        public static FileEndContent GetSendFileEndContent(byte[] contentBuffer) {
-            return GetContent(contentBuffer) as FileEndContent;
-        }
-
-        public static FileCancelContent GetSendFileCancelContent(byte[] contentBuffer) {
-            return GetContent(contentBuffer) as FileCancelContent;
-        }
-
-        public static ResponseContent GetResponseContent(byte[] contentBuffer) {
-            return GetContent(contentBuffer) as ResponseContent;
-        }
-
         public ContentBase GetContent(byte[] contentBuffer) {
             if (contentBuffer is null) {
                 throw new ArgumentNullException(nameof(contentBuffer));
