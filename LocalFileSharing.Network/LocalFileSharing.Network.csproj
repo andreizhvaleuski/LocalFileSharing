@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Framing\Content\ContentBase.cs" />
+    <Compile Include="Framing\Content\FileContentBase.cs" />
     <Compile Include="Framing\Content\ResponseContent.cs" />
     <Compile Include="Framing\Content\FileCancelContent.cs" />
     <Compile Include="Framing\Content\FileEndContent.cs" />

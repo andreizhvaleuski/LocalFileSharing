@@ -262,7 +262,7 @@ namespace LocalFileSharing.Domain {
 
                         fileData.FileId = initialContent.OperationID;
                         fileData.FileSize = initialContent.FileSize;
-                        fileData.FileSha256Hash = initialContent.Sha256FileHash.ToArray();
+                        fileData.FileSha256Hash = initialContent.FileHash.ToArray();
                         fileData.FilePath = Path.Combine(downloadDirectory, initialContent.FileName);
 
                         stream = new BinaryWriter(File.Open(fileData.FilePath, FileMode.Truncate));

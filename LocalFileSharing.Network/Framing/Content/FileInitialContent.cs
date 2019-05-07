@@ -1,13 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace LocalFileSharing.Network.Framing.Content {
     [Serializable]
     public class FileInitialContent : ContentBase {
+        public string FileName { get; private set; }
+
+        public long FileSize { get; private set; }
+
+        public byte[] FileHash { get; private set; }
+
         public FileInitialContent(
-            Guid fileId, 
+            Guid fileId,
             string fileName,
-            long fileSize, 
+            long fileSize,
             byte[] sha256FileHash)
             : base(fileId) {
             if (string.IsNullOrWhiteSpace(fileName)) {
@@ -37,16 +42,10 @@ namespace LocalFileSharing.Network.Framing.Content {
 
             FileName = fileName;
             FileSize = fileSize;
-            Sha256FileHash = sha256FileHash;
+            FileHash = sha256FileHash;
         }
 
         public FileInitialContent(string fileName, long fileSize, byte[] sha256FileHash)
             : this(Guid.NewGuid(), fileName, fileSize, sha256FileHash) { }
-
-        public string FileName { get; private set; }
-
-        public long FileSize { get; private set; }
-
-        public IEnumerable<byte> Sha256FileHash { get; private set; }
     }
 }
