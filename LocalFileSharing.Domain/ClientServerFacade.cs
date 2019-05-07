@@ -1,6 +1,6 @@
 ﻿using System;
 
-using LocalFileSharing.Network.Framing;
+using LocalFileSharing.Network.Framing.Wrappers;
 using LocalFileSharing.Network.Sockets;
 
 namespace LocalFileSharing.Domain {

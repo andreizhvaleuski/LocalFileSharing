@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 using LocalFileSharing.Domain.Infrastructure;
 using LocalFileSharing.Network.Framing;
 using LocalFileSharing.Network.Framing.Content;
-using LocalFileSharing.Network.Framing;
 using LocalFileSharing.Network.Framing.Wrappers;
 using LocalFileSharing.Network.Sockets;
 
 namespace LocalFileSharing.Domain {
     public sealed class FileSharingClient {
-        public const int BlockBufferSize = 512_000;
+        public const int BlockBufferSize = 1024 * 512;
 
         private readonly ILengthPrefixWrapper lengthPrefixWrapper;
         private readonly ITypePrefixWrapper typePrefixWrapper;
         private readonly IFileHash fileHash;
+        private readonly IContentConverter contentConverter;
 
         private readonly TcpClient client;
 
@@ -35,6 +35,7 @@ namespace LocalFileSharing.Domain {
             lengthPrefixWrapper = new LengthPrefixWrapper();
             typePrefixWrapper = new TypePrefixWrapper();
             fileHash = new SHA256FileHash();
+            contentConverter = new ContentConverter();
         }
 
         public async Task SendFileAsync(
@@ -228,7 +229,7 @@ namespace LocalFileSharing.Domain {
                 throw new ArgumentException();
             }
 
-            byte[] buffer = ContentConverter.GetBytes(content);
+            byte[] buffer = contentConverter.GetBytes(content);
             buffer = typePrefixWrapper.Wrap(buffer, message);
             buffer = lengthPrefixWrapper.Wrap(buffer);
 
@@ -368,7 +369,7 @@ namespace LocalFileSharing.Domain {
             }
 
             ResponseContent content = new ResponseContent(fileId, response);
-            byte[] buffer = ContentConverter.GetBytes(content);
+            byte[] buffer = contentConverter.GetBytes(content);
             buffer = typePrefixWrapper.Wrap(buffer, MessageType.Response);
             buffer = lengthPrefixWrapper.Wrap(buffer);
 
@@ -381,7 +382,11 @@ namespace LocalFileSharing.Domain {
             return length;
         }
 
-        private void UnwrapMessageData(byte[] buffer, out MessageType type, out ContentBase content) {
+        private void UnwrapMessageData(
+            byte[] buffer,
+            out MessageType type,
+            out ContentBase content
+        ) {
             if (buffer is null) {
                 throw new ArgumentNullException(nameof(buffer));
             }
@@ -392,7 +397,7 @@ namespace LocalFileSharing.Domain {
             byte[] contentBuffer = new byte[buffer.Length - typePrefixWrapper.TypePrefixSize];
             Array.Copy(buffer, typePrefixWrapper.TypePrefixSize, contentBuffer,
                 0, contentBuffer.Length);
-            content = ContentConverter.GetContent(contentBuffer);
+            content = contentConverter.GetContent(contentBuffer);
         }
     }
 }
