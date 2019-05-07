@@ -274,8 +274,8 @@ namespace LocalFileSharing.Domain {
                     }
                     else if (type == MessageType.SendFileRegular && initialized) {
                         FileRegularContent regularContent = (FileRegularContent)content;
-                        stream.Write(regularContent.Block, 0, regularContent.Block.Length);
-                        bytesReceived += regularContent.Block.Length;
+                        stream.Write(regularContent.FileBlock, 0, regularContent.FileBlock.Length);
+                        bytesReceived += regularContent.FileBlock.Length;
 
                         ReportReceiveProgress(progress, fileData, bytesReceived, ReceiveFileState.Sending);
 
@@ -341,7 +341,7 @@ namespace LocalFileSharing.Domain {
                 }
                 else if (type == MessageType.SendFileRegular && initialized) {
                     FileRegularContent regularContent = (FileRegularContent)content;
-                    stream.Write(regularContent.Block, 0, regularContent.Block.Length);
+                    stream.Write(regularContent.FileBlock, 0, regularContent.FileBlock.Length);
 
                     SendResponse(Guid.NewGuid(), ResponseType.ReceiveFileRegular);
                 }
