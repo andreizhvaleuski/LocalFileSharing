@@ -15,10 +15,10 @@ namespace LocalFileSharing.Domain {
     public sealed class FileSharingClient {
         public const int BlockBufferSize = 1024 * 512;
 
-        private readonly ILengthPrefixWrapper lengthPrefixWrapper;
-        private readonly ITypePrefixWrapper typePrefixWrapper;
-        private readonly IFileHash fileHash;
-        private readonly IContentConverter contentConverter;
+        private readonly ILengthPrefixWrapper _lengthPrefixWrapper;
+        private readonly ITypePrefixWrapper _typePrefixWrapper;
+        private readonly IFileHashCalculator _fileHashCalculator;
+        private readonly IContentConverter _contentConverter;
 
         private readonly TcpClient client;
 
@@ -32,10 +32,10 @@ namespace LocalFileSharing.Domain {
 
             this.client = client;
 
-            lengthPrefixWrapper = new LengthPrefixWrapper();
-            typePrefixWrapper = new TypePrefixWrapper();
-            fileHash = new SHA256FileHash();
-            contentConverter = new ContentConverter();
+            _lengthPrefixWrapper = new LengthPrefixWrapper();
+            _typePrefixWrapper = new TypePrefixWrapper();
+            _fileHashCalculator = new SHA256FileHashCalculator();
+            _contentConverter = new ContentConverter();
         }
 
         public async Task SendFileAsync(
@@ -68,7 +68,7 @@ namespace LocalFileSharing.Domain {
                     return;
                 }
 
-                fileData.FileSha256Hash = fileHash.ComputeHash(path);
+                fileData.FileSha256Hash = _fileHashCalculator.Calculate(path);
                 ReportSendProgress(progress, fileData, 0, SendFileState.Hashing);
 
                 if (cancellationToken.IsCancellationRequested) {
@@ -229,9 +229,9 @@ namespace LocalFileSharing.Domain {
                 throw new ArgumentException();
             }
 
-            byte[] buffer = contentConverter.GetBytes(content);
-            buffer = typePrefixWrapper.Wrap(buffer, message);
-            buffer = lengthPrefixWrapper.Wrap(buffer);
+            byte[] buffer = _contentConverter.GetBytes(content);
+            buffer = _typePrefixWrapper.Wrap(buffer, message);
+            buffer = _lengthPrefixWrapper.Wrap(buffer);
 
             return buffer;
         }
@@ -310,7 +310,7 @@ namespace LocalFileSharing.Domain {
                 }
 
                 ReportReceiveProgress(progress, fileData, 0, ReceiveFileState.Hashing);
-                byte[] receivedFileSha256Hash = fileHash.ComputeHash(fileData.FilePath);
+                byte[] receivedFileSha256Hash = _fileHashCalculator.Calculate(fileData.FilePath);
 
                 if (!fileData.FileSha256Hash.SequenceEqual(receivedFileSha256Hash)) {
                     ReportReceiveProgress(progress, fileData, 0, ReceiveFileState.Failed);
@@ -369,15 +369,15 @@ namespace LocalFileSharing.Domain {
             }
 
             ResponseContent content = new ResponseContent(fileId, response);
-            byte[] buffer = contentConverter.GetBytes(content);
-            buffer = typePrefixWrapper.Wrap(buffer, MessageType.Response);
-            buffer = lengthPrefixWrapper.Wrap(buffer);
+            byte[] buffer = _contentConverter.GetBytes(content);
+            buffer = _typePrefixWrapper.Wrap(buffer, MessageType.Response);
+            buffer = _lengthPrefixWrapper.Wrap(buffer);
 
             client.SendBytes(buffer);
         }
 
         private int ReceiveLength() {
-            byte[] bufferLength = client.ReceiveBytes(lengthPrefixWrapper.LengthPrefixSize);
+            byte[] bufferLength = client.ReceiveBytes(_lengthPrefixWrapper.LengthPrefixSize);
             int length = BitConverter.ToInt32(bufferLength, 0);
             return length;
         }
@@ -391,13 +391,13 @@ namespace LocalFileSharing.Domain {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
-            byte[] typeBuffer = new byte[typePrefixWrapper.TypePrefixSize];
+            byte[] typeBuffer = new byte[_typePrefixWrapper.TypePrefixSize];
             Array.Copy(buffer, 0, typeBuffer, 0, typeBuffer.Length);
-            type = typePrefixWrapper.GetTypePrefixValue(typeBuffer);
-            byte[] contentBuffer = new byte[buffer.Length - typePrefixWrapper.TypePrefixSize];
-            Array.Copy(buffer, typePrefixWrapper.TypePrefixSize, contentBuffer,
+            type = _typePrefixWrapper.GetTypePrefixValue(typeBuffer);
+            byte[] contentBuffer = new byte[buffer.Length - _typePrefixWrapper.TypePrefixSize];
+            Array.Copy(buffer, _typePrefixWrapper.TypePrefixSize, contentBuffer,
                 0, contentBuffer.Length);
-            content = contentConverter.GetContent(contentBuffer);
+            content = _contentConverter.GetContent(contentBuffer);
         }
     }
 }

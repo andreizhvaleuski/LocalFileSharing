@@ -49,9 +49,11 @@
     <Compile Include="Framing\Content\FileRegularContent.cs" />
     <Compile Include="Framing\ContentConverter.cs" />
     <Compile Include="Framing\IContentConverter.cs" />
+    <Compile Include="Framing\IFileHashCalculator.cs" />
     <Compile Include="Framing\MessageTypeConverter.cs" />
     <Compile Include="Framing\MessageType.cs" />
     <Compile Include="Framing\ResponseType.cs" />
+    <Compile Include="Framing\SHA256FileHashCalculator.cs" />
     <Compile Include="Framing\Wrappers\ILengthPrefixWrapper.cs" />
     <Compile Include="Framing\Wrappers\ITypePrefixWrapper.cs" />
     <Compile Include="Framing\Wrappers\LengthPrefixWrapper.cs" />

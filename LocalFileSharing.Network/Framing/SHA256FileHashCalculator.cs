@@ -1,11 +1,14 @@
 ﻿using System.IO;
 using System.Security.Cryptography;
 
-namespace LocalFileSharing.Domain.Infrastructure {
-    public class SHA256FileHash : IFileHash {
-        public byte[] ComputeHash(string path) {
+namespace LocalFileSharing.Network.Framing {
+    public class SHA256FileHashCalculator : IFileHashCalculator {
+        public byte[] Calculate(string path) {
             if (!File.Exists(path)) {
-                throw new FileNotFoundException($"File was not found: { path }.");
+                throw new FileNotFoundException(
+                    $"File was not found.",
+                    path
+                );
             }
 
             byte[] sha256Hash = null;
