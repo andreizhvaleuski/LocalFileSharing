@@ -49,7 +49,7 @@ namespace LocalFileSharing.UnitTests.Network {
 
             ResponseContent actualContent = (ResponseContent)contentConverter.GetContent(contentBuffer);
             Assert.AreEqual(expectedContent.OperationID, actualContent.OperationID);
-            Assert.AreEqual(expectedContent.Response, actualContent.Response);
+            Assert.AreEqual(expectedContent.ResponseType, actualContent.ResponseType);
             Assert.IsInstanceOf(expectedContent.GetType(), actualContent);
         }
 

@@ -5,11 +5,8 @@ namespace LocalFileSharing.Network.Framing.Content {
     public class FileRegularContent : FileContentBase {
         public byte[] FileBlock { get; protected set; }
 
-        public FileRegularContent(
-            Guid opeartionID, 
-            byte[] fileHash,
-            byte[] fileBlock
-        ) : base(opeartionID, fileHash) {
+        public FileRegularContent(Guid opeartionID, byte[] fileBlock)
+            : base(opeartionID) {
             if (fileBlock is null) {
                 throw new ArgumentNullException(nameof(fileBlock));
             }

@@ -187,7 +187,7 @@ namespace LocalFileSharing.Domain {
                 throw new InvalidCastException();
             }
 
-            return response.Response;
+            return response.ResponseType;
         }
 
         private void SendFileInitialContent(FileInitialContent initialContent) {
