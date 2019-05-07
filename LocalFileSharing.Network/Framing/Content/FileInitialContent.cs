@@ -2,19 +2,17 @@
 
 namespace LocalFileSharing.Network.Framing.Content {
     [Serializable]
-    public class FileInitialContent : ContentBase {
+    public class FileInitialContent : FileContentBase {
         public string FileName { get; private set; }
 
         public long FileSize { get; private set; }
 
-        public byte[] FileHash { get; private set; }
-
         public FileInitialContent(
-            Guid fileId,
+            Guid opeartionID,
             string fileName,
             long fileSize,
-            byte[] sha256FileHash)
-            : base(fileId) {
+            byte[] fileHash
+        ) : base(opeartionID, fileHash) {
             if (string.IsNullOrWhiteSpace(fileName)) {
                 throw new ArgumentException(
                     $"The file name can not be null or whitespace.",
@@ -29,20 +27,8 @@ namespace LocalFileSharing.Network.Framing.Content {
                 );
             }
 
-            if (sha256FileHash is null) {
-                throw new ArgumentNullException(nameof(sha256FileHash));
-            }
-
-            if (sha256FileHash.Length <= 0) {
-                throw new ArgumentException(
-                    $"The file hash length must be greater than 0.",
-                    nameof(sha256FileHash)
-                );
-            }
-
             FileName = fileName;
             FileSize = fileSize;
-            FileHash = sha256FileHash;
         }
 
         public FileInitialContent(string fileName, long fileSize, byte[] sha256FileHash)

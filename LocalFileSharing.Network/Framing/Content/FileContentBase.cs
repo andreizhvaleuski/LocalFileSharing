@@ -1,6 +1,7 @@
 ﻿using System;
 
 namespace LocalFileSharing.Network.Framing.Content {
+    [Serializable]
     public abstract class FileContentBase : ContentBase {
         public byte[] FileHash { get; protected set; }
 
