@@ -324,46 +324,6 @@ namespace LocalFileSharing.Network.Domain {
             });
         }
 
-        public void ReceiveFile(string downloadDirectory) {
-            bool initialized = false;
-            string fileName = string.Empty;
-            FileStream stream = null;
-            do {
-                int length = ReceiveLength();
-                byte[] buffer = client.ReceiveBytes(length);
-                UnwrapMessageData(buffer, out MessageType type, out ContentBase content);
-                if (type == MessageType.SendFileInitial) {
-                    FileInitialContent inititalContent = (FileInitialContent)content;
-                    initialized = true;
-                    fileName = inititalContent.FileName;
-                    stream = File.OpenWrite(Path.Combine(downloadDirectory, fileName));
-
-                    SendResponse(Guid.NewGuid(), ResponseType.ReceiveFileInitial);
-                }
-                else if (type == MessageType.SendFileRegular && initialized) {
-                    FileRegularContent regularContent = (FileRegularContent)content;
-                    stream.Write(regularContent.FileBlock, 0, regularContent.FileBlock.Length);
-
-                    SendResponse(Guid.NewGuid(), ResponseType.ReceiveFileRegular);
-                }
-                else if (type == MessageType.SendFileEnd && initialized) {
-                    //SendFileEndContent initialContent = (SendFileEndContent)content;
-
-                    SendResponse(Guid.NewGuid(), ResponseType.ReceiveFileEnd);
-
-                    break;
-                }
-                else if (type == MessageType.SendFileCancel && initialized) {
-                    //SendFileCancelContent initialContent = (SendFileCancelContent)content;
-                    File.Delete(Path.Combine(downloadDirectory, fileName));
-
-                    SendResponse(Guid.NewGuid(), ResponseType.ReceiveFileCancel);
-                    break;
-                }
-            } while (true);
-            stream?.Close();
-        }
-
         private void SendResponse(Guid fileId, ResponseType response) {
             if (response == ResponseType.Unspecified) {
                 throw new ArgumentException();
