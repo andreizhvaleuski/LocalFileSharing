@@ -212,10 +212,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LocalFileSharing.Domain\LocalFileSharing.Domain.csproj">
-      <Project>{E02AFB37-A24B-4274-9B47-01C132AE7802}</Project>
-      <Name>LocalFileSharing.Domain</Name>
-    </ProjectReference>
     <ProjectReference Include="..\LocalFileSharing.Network\LocalFileSharing.Network.csproj">
       <Project>{02b56641-6ab7-405c-8b08-add596df687c}</Project>
       <Name>LocalFileSharing.Network</Name>
