@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+
 using LocalFileSharing.Network.Common;
 using LocalFileSharing.Network.Common.Content;
+
 using NUnit.Framework;
 
 namespace LocalFileSharing.UnitTests.Network {
@@ -19,7 +19,7 @@ namespace LocalFileSharing.UnitTests.Network {
         public void GetBytes_NullContent_ThrowsArgumentNullException() {
             ContentBase content = null;
 
-            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() => 
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() =>
                 contentConverter.GetBytes(content)
             );
             Assert.That(ex.ParamName, Is.EqualTo("content"));
@@ -28,7 +28,7 @@ namespace LocalFileSharing.UnitTests.Network {
         [Test]
         public void GetBytes_ValidContent_ReturnsBuffer() {
             ContentBase content = new ResponseContent(
-                Guid.NewGuid(), 
+                Guid.NewGuid(),
                 ResponseType.ReceiveFileInitial
             );
 
