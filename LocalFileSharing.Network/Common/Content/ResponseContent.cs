@@ -2,7 +2,7 @@
 
 namespace LocalFileSharing.Network.Common.Content {
     [Serializable]
-    public class ResponseContent : FileBaseContent {
+    public class ResponseContent : ContentBase {
         public ResponseType Response { get; private set; }
 
         public ResponseContent(Guid fileId, ResponseType type)

@@ -47,13 +47,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Content\FileBaseContent.cs" />
+    <Compile Include="Common\Content\ContentBase.cs" />
     <Compile Include="Common\Content\ResponseContent.cs" />
     <Compile Include="Common\Content\FileCancelContent.cs" />
     <Compile Include="Common\Content\FileEndContent.cs" />
     <Compile Include="Common\Content\FileInitialContent.cs" />
     <Compile Include="Common\Content\FileRegularContent.cs" />
     <Compile Include="Common\ContentConverter.cs" />
+    <Compile Include="Common\IContentConverter.cs" />
     <Compile Include="Common\MessageTypeConverter.cs" />
     <Compile Include="Common\MessageType.cs" />
     <Compile Include="Common\ResponseType.cs" />

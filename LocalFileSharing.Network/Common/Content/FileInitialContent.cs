@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace LocalFileSharing.Network.Common.Content {
     [Serializable]
-    public class FileInitialContent : FileBaseContent {
+    public class FileInitialContent : ContentBase {
         public FileInitialContent(
             Guid fileId, 
             string fileName,

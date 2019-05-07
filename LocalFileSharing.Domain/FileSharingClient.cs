@@ -175,7 +175,7 @@ namespace LocalFileSharing.Domain {
         private ResponseType ReceiveResponse() {
             int length = ReceiveLength();
             byte[] buffer = client.ReceiveBytes(length);
-            UnwrapMessageData(buffer, out MessageType type, out FileBaseContent content);
+            UnwrapMessageData(buffer, out MessageType type, out ContentBase content);
 
             if (type != MessageType.Response) {
                 throw new ArgumentException();
@@ -219,7 +219,7 @@ namespace LocalFileSharing.Domain {
             client.SendBytes(buffer);
         }
 
-        private byte[] WrapContent(FileBaseContent content, MessageType message) {
+        private byte[] WrapContent(ContentBase content, MessageType message) {
             if (content is null) {
                 throw new ArgumentNullException(nameof(content));
             }
@@ -255,11 +255,11 @@ namespace LocalFileSharing.Domain {
                 do {
                     int length = ReceiveLength();
                     byte[] buffer = client.ReceiveBytes(length);
-                    UnwrapMessageData(buffer, out MessageType type, out FileBaseContent content);
+                    UnwrapMessageData(buffer, out MessageType type, out ContentBase content);
                     if (type == MessageType.SendFileInitial) {
                         FileInitialContent initialContent = (FileInitialContent)content;
 
-                        fileData.FileId = initialContent.FileId;
+                        fileData.FileId = initialContent.OperationID;
                         fileData.FileSize = initialContent.FileSize;
                         fileData.FileSha256Hash = initialContent.Sha256FileHash.ToArray();
                         fileData.FilePath = Path.Combine(downloadDirectory, initialContent.FileName);
@@ -329,7 +329,7 @@ namespace LocalFileSharing.Domain {
             do {
                 int length = ReceiveLength();
                 byte[] buffer = client.ReceiveBytes(length);
-                UnwrapMessageData(buffer, out MessageType type, out FileBaseContent content);
+                UnwrapMessageData(buffer, out MessageType type, out ContentBase content);
                 if (type == MessageType.SendFileInitial) {
                     FileInitialContent inititalContent = (FileInitialContent)content;
                     initialized = true;
@@ -381,7 +381,7 @@ namespace LocalFileSharing.Domain {
             return length;
         }
 
-        private void UnwrapMessageData(byte[] buffer, out MessageType type, out FileBaseContent content) {
+        private void UnwrapMessageData(byte[] buffer, out MessageType type, out ContentBase content) {
             if (buffer is null) {
                 throw new ArgumentNullException(nameof(buffer));
             }
@@ -392,7 +392,7 @@ namespace LocalFileSharing.Domain {
             byte[] contentBuffer = new byte[buffer.Length - typePrefixWrapper.TypePrefixSize];
             Array.Copy(buffer, typePrefixWrapper.TypePrefixSize, contentBuffer,
                 0, contentBuffer.Length);
-            content = ContentConverter.GetFileContent(contentBuffer);
+            content = ContentConverter.GetContent(contentBuffer);
         }
     }
 }

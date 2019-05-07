@@ -2,7 +2,7 @@
 
 namespace LocalFileSharing.Network.Common.Content {
     [Serializable]
-    public class FileRegularContent : FileBaseContent {
+    public class FileRegularContent : ContentBase {
         public FileRegularContent(Guid fileId, byte[] block)
             : base(fileId) {
             if (block is null) {

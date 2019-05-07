@@ -2,7 +2,7 @@
 
 namespace LocalFileSharing.Network.Common.Content {
     [Serializable]
-    public class FileEndContent : FileBaseContent {
+    public class FileEndContent : ContentBase {
         public FileEndContent(Guid fileId)
             : base(fileId) {
         }
