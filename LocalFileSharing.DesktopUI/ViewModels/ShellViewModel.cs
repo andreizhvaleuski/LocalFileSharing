@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-
+using System.Threading.Tasks;
 using Caliburn.Micro;
 
 using LocalFileSharing.DesktopUI.Messages;
@@ -55,7 +55,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
 
             _connectedVM.FileSharingClient = message.FileSharingClient;
 
-            if (ActiveItem != _connectedVM) {
+            if (ActiveItem == _connectedVM) {
                 return;
             }
 

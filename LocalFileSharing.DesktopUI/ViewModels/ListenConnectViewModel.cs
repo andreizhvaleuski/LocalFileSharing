@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 
 using Caliburn.Micro;
+
 using LocalFileSharing.DesktopUI.Messages;
 using LocalFileSharing.Network.Domain;
 using LocalFileSharing.Network.Sockets;
@@ -32,7 +33,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
         private async void GetListenIPEndPoint() {
             IPEndPoint endPoint = await _listenFileSharingClient.GetServerIPEndPointAsync(default);
             ListenIP = endPoint.Address;
-            ListenPort = endPoint.Port;
+            ListenPort = TcpSocketBase.MinAllowedPort;
         }
 
         public IPAddress ListenIP {
@@ -123,8 +124,9 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
 
         public async void Listen() {
             Listening = true;
-            await Task.Delay(3000);
-            _eventAgregator.PublishOnUIThread(new ErrorMessage("404", "Not found"));
+            FileSharingClient fileSharingClient =
+                await _listenFileSharingClient.ListenAsync(new IPEndPoint(ListenIP, ListenPort));
+            _eventAgregator.PublishOnUIThread(new ConnectedMessage(fileSharingClient));
             Listening = false;
         }
 
@@ -136,7 +138,10 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
 
         public async void Connect() {
             Connecting = true;
-            await Task.Delay(1000);
+            await Task.Run(() => {
+                _connectFileSharingClient = new FileSharingClient(ConnectIP, ConnectPort);
+            });
+            _eventAgregator.PublishOnUIThread(new ConnectedMessage(_connectFileSharingClient));
             Connecting = false;
         }
 

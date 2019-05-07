@@ -11,7 +11,7 @@ namespace LocalFileSharing.Network.Sockets {
                 throw new ArgumentNullException(nameof(ipAddress));
             }
 
-            if (port >= MinAllowedPort && port <= MaxAllowedPort) {
+            if (!(port >= MinAllowedPort && port <= MaxAllowedPort)) {
                 throw new ArgumentOutOfRangeException(
                     nameof(port),
                     port,

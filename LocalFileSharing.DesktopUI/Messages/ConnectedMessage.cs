@@ -7,9 +7,9 @@ namespace LocalFileSharing.DesktopUI.Messages {
         public FileSharingClient FileSharingClient { get; protected set; }
 
         public ConnectedMessage(FileSharingClient fileSharingClient) {
-            if (fileSharingClient is null) {
-                throw new ArgumentNullException(nameof(fileSharingClient));
-            }
+            //if (fileSharingClient is null) {
+            //    throw new ArgumentNullException(nameof(fileSharingClient));
+            //}
 
             FileSharingClient = fileSharingClient;
         }

@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LocalFileSharing.Domain\LocalFileSharing.Domain.csproj" />
     <ProjectReference Include="..\LocalFileSharing.Network\LocalFileSharing.Network.csproj" />
   </ItemGroup>
 
