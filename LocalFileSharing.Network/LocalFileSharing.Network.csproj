@@ -41,6 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\FileData.cs" />
+    <Compile Include="Domain\FileSharingClient.cs" />
+    <Compile Include="Domain\FileSharingServer.cs" />
+    <Compile Include="Domain\Progress\ReceiveFileProgressReport.cs" />
+    <Compile Include="Domain\Progress\SendFileProgressReport.cs" />
+    <Compile Include="Domain\States\ReceiveFileState.cs" />
+    <Compile Include="Domain\States\SendFileState.cs" />
     <Compile Include="Framing\Content\ContentBase.cs" />
     <Compile Include="Framing\Content\FileContentBase.cs" />
     <Compile Include="Framing\Content\ResponseContent.cs" />
