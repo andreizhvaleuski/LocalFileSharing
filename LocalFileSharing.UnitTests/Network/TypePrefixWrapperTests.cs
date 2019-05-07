@@ -6,23 +6,19 @@ using LocalFileSharing.Network.Framing.Wrappers;
 
 using NUnit.Framework;
 
-namespace LocalFileSharing.UnitTests.Network
-{
+namespace LocalFileSharing.UnitTests.Network {
     [TestFixture]
-    public class TypePrefixWrapperTests
-    {
+    public class TypePrefixWrapperTests {
         private TypePrefixWrapper typePrefixWrapper;
 
         [OneTimeSetUp]
-        public void Init()
-        {
+        public void Init() {
             typePrefixWrapper = new TypePrefixWrapper();
         }
 
         [TestCase("message", MessageType.Keepalive)]
         [TestCase("", MessageType.SendFileEnd)]
-        public void Wrap_ValidBuffer_ReturnsWrappedBuffer(string message, MessageType type)
-        {
+        public void Wrap_ValidBuffer_ReturnsWrappedBuffer(string message, MessageType type) {
             byte[] unwrappedBuffer = Encoding.Unicode.GetBytes(message);
             byte[] expectedTypePrefixBuffer = MessageTypeConverter.GetBytes(type);
             byte[] expectedWrappedBuffer =
@@ -36,21 +32,19 @@ namespace LocalFileSharing.UnitTests.Network
         }
 
         [Test]
-        public void Wrap_NullBuffer_ThrowsArgumentNullException()
-        {
+        public void Wrap_NullBuffer_ThrowsArgumentNullException() {
             byte[] buffer = null;
 
-            var ex = Assert.Throws<ArgumentNullException>(() =>
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() =>
                 typePrefixWrapper.Wrap(buffer, MessageType.Unspecified));
             Assert.That(ex.ParamName, Is.EqualTo("unwrappedBuffer"));
         }
 
         [Test]
-        public void Wrap_MessageTypeUnspecified_ThrowsArgumentException()
-        {
+        public void Wrap_MessageTypeUnspecified_ThrowsArgumentException() {
             byte[] buffer = new byte[1];
 
-            var ex = Assert.Throws<ArgumentException>(() =>
+            ArgumentException ex = Assert.Throws<ArgumentException>(() =>
                 typePrefixWrapper.Wrap(buffer, MessageType.Unspecified));
             Assert.That(ex.ParamName, Is.EqualTo("type"));
         }
@@ -61,8 +55,7 @@ namespace LocalFileSharing.UnitTests.Network
         [TestCase(MessageType.SendFileInitial)]
         [TestCase(MessageType.SendFileCancel)]
         [TestCase(MessageType.Response)]
-        public void GetTypePrefixValue_ValidBuffer_ReturnsMessageType(MessageType expectedType)
-        {
+        public void GetTypePrefixValue_ValidBuffer_ReturnsMessageType(MessageType expectedType) {
             byte[] wrappedBuffer = new byte[typePrefixWrapper.TypePrefixSize];
             byte[] typeBuffer = MessageTypeConverter.GetBytes(expectedType);
             typeBuffer.CopyTo(wrappedBuffer, 0);
@@ -74,21 +67,20 @@ namespace LocalFileSharing.UnitTests.Network
 
         [TestCase(sizeof(int) - 1)]
         [TestCase(0)]
-        public void GetTypePrefixValue_BufferWithInvalidLength_ThrowsArgumentNullException(int wrappedBufferLength)
-        {
+        public void GetTypePrefixValue_BufferWithInvalidLength_ThrowsArgumentNullException(
+            int wrappedBufferLength) {
             byte[] wrappedBuffer = new byte[wrappedBufferLength];
 
-            var ex = Assert.Throws<ArgumentException>(() =>
+            ArgumentException ex = Assert.Throws<ArgumentException>(() =>
                 typePrefixWrapper.GetTypePrefixValue(wrappedBuffer));
             Assert.That(ex.ParamName, Is.EqualTo("wrappedBuffer"));
         }
 
         [Test]
-        public void GetTypePrefixValue_NullBuffer_ThrowsArgumentNullException()
-        {
+        public void GetTypePrefixValue_NullBuffer_ThrowsArgumentNullException() {
             byte[] wrappedBuffer = null;
 
-            var ex = Assert.Throws<ArgumentNullException>(() =>
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() =>
                 typePrefixWrapper.GetTypePrefixValue(wrappedBuffer));
             Assert.That(ex.ParamName, Is.EqualTo("wrappedBuffer"));
         }

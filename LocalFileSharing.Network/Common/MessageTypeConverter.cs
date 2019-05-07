@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Text;
 
-namespace LocalFileSharing.Network.Common
-{
-    public static class MessageTypeConverter
-    {
+namespace LocalFileSharing.Network.Common {
+    public static class MessageTypeConverter {
         public const int MessageTypeLength = 6;
 
         public const string Keepalive = "KPA";
@@ -14,47 +12,37 @@ namespace LocalFileSharing.Network.Common
         public const string SendFileCancel = "SFC";
         public const string Response = "RSP";
 
-        public static byte[] GetBytes(MessageType type)
-        {
+        public static byte[] GetBytes(MessageType type) {
             byte[] typeBuffer = null;
 
-            if (type == MessageType.Keepalive)
-            {
+            if (type == MessageType.Keepalive) {
                 typeBuffer = Encoding.Unicode.GetBytes(Keepalive);
             }
-            else if (type == MessageType.SendFileInitial)
-            {
+            else if (type == MessageType.SendFileInitial) {
                 typeBuffer = Encoding.Unicode.GetBytes(SendFileInitial);
             }
-            else if (type == MessageType.SendFileRegular)
-            {
+            else if (type == MessageType.SendFileRegular) {
                 typeBuffer = Encoding.Unicode.GetBytes(SendFileRegular);
             }
-            else if (type == MessageType.SendFileEnd)
-            {
+            else if (type == MessageType.SendFileEnd) {
                 typeBuffer = Encoding.Unicode.GetBytes(SendFileEnd);
             }
-            else if (type == MessageType.SendFileCancel)
-            {
+            else if (type == MessageType.SendFileCancel) {
                 typeBuffer = Encoding.Unicode.GetBytes(SendFileCancel);
             }
-            else if (type == MessageType.Response)
-            {
+            else if (type == MessageType.Response) {
                 typeBuffer = Encoding.Unicode.GetBytes(Response);
             }
 
             return typeBuffer;
         }
 
-        public static MessageType GetMessageType(byte[] typeBuffer)
-        {
-            if (typeBuffer is null)
-            {
+        public static MessageType GetMessageType(byte[] typeBuffer) {
+            if (typeBuffer is null) {
                 throw new ArgumentNullException(nameof(typeBuffer));
             }
 
-            if (typeBuffer.Length != MessageTypeLength)
-            {
+            if (typeBuffer.Length != MessageTypeLength) {
                 throw new ArgumentException(
                     $"The {typeBuffer} must be {MessageTypeLength} bytes long.",
                     nameof(typeBuffer)
@@ -64,28 +52,22 @@ namespace LocalFileSharing.Network.Common
             string message = Encoding.Unicode.GetString(typeBuffer);
             MessageType type = MessageType.Unspecified;
 
-            if (message.Equals(Keepalive, StringComparison.InvariantCultureIgnoreCase))
-            {
+            if (message.Equals(Keepalive, StringComparison.InvariantCultureIgnoreCase)) {
                 type = MessageType.Keepalive;
             }
-            else if (message.Equals(SendFileInitial, StringComparison.InvariantCultureIgnoreCase))
-            {
+            else if (message.Equals(SendFileInitial, StringComparison.InvariantCultureIgnoreCase)) {
                 type = MessageType.SendFileInitial;
             }
-            else if (message.Equals(SendFileRegular, StringComparison.InvariantCultureIgnoreCase))
-            {
+            else if (message.Equals(SendFileRegular, StringComparison.InvariantCultureIgnoreCase)) {
                 type = MessageType.SendFileRegular;
             }
-            else if (message.Equals(SendFileEnd, StringComparison.InvariantCultureIgnoreCase))
-            {
+            else if (message.Equals(SendFileEnd, StringComparison.InvariantCultureIgnoreCase)) {
                 type = MessageType.SendFileEnd;
             }
-            else if (message.Equals(SendFileCancel, StringComparison.InvariantCultureIgnoreCase))
-            {
+            else if (message.Equals(SendFileCancel, StringComparison.InvariantCultureIgnoreCase)) {
                 type = MessageType.SendFileCancel;
             }
-            else if (message.Equals(Response, StringComparison.InvariantCultureIgnoreCase))
-            {
+            else if (message.Equals(Response, StringComparison.InvariantCultureIgnoreCase)) {
                 type = MessageType.Response;
             }
 

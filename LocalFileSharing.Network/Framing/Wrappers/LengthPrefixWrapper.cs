@@ -1,15 +1,11 @@
 ﻿using System;
 
-namespace LocalFileSharing.Network.Framing.Wrappers
-{
-    public class LengthPrefixWrapper : ILengthPrefixWrapper
-    {
+namespace LocalFileSharing.Network.Framing.Wrappers {
+    public class LengthPrefixWrapper : ILengthPrefixWrapper {
         public int LengthPrefixSize => sizeof(int);
 
-        public byte[] Wrap(byte[] unwrappedBuffer)
-        {
-            if (unwrappedBuffer is null)
-            {
+        public byte[] Wrap(byte[] unwrappedBuffer) {
+            if (unwrappedBuffer is null) {
                 throw new ArgumentNullException(nameof(unwrappedBuffer));
             }
 
@@ -22,15 +18,12 @@ namespace LocalFileSharing.Network.Framing.Wrappers
             return wrappedBuffer;
         }
 
-        public int GetLengthPrefixValue(byte[] wrappedBuffer)
-        {
-            if (wrappedBuffer is null)
-            {
+        public int GetLengthPrefixValue(byte[] wrappedBuffer) {
+            if (wrappedBuffer is null) {
                 throw new ArgumentNullException(nameof(wrappedBuffer));
             }
 
-            if (wrappedBuffer.Length < LengthPrefixSize)
-            {
+            if (wrappedBuffer.Length < LengthPrefixSize) {
                 throw new ArgumentException(
                     $"The {nameof(wrappedBuffer)} length cannot be less than {LengthPrefixSize} bytes.",
                     nameof(wrappedBuffer)

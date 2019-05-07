@@ -1,21 +1,19 @@
-﻿using LocalFileSharing.Domain.Infrastructure;
-using LocalFileSharing.Network.Common;
-using LocalFileSharing.Network.Common.Content;
-using LocalFileSharing.Network.Framing;
-using LocalFileSharing.Network.Framing.Wrappers;
-using LocalFileSharing.Network.Sockets;
-
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace LocalFileSharing.Domain
-{
-    public sealed class FileSharingClient
-    {
+using LocalFileSharing.Domain.Infrastructure;
+using LocalFileSharing.Network.Common;
+using LocalFileSharing.Network.Common.Content;
+using LocalFileSharing.Network.Framing;
+using LocalFileSharing.Network.Framing.Wrappers;
+using LocalFileSharing.Network.Sockets;
+
+namespace LocalFileSharing.Domain {
+    public sealed class FileSharingClient {
         public const int BlockBufferSize = 512_000;
 
         private readonly ILengthPrefixWrapper lengthPrefixWrapper;
@@ -25,13 +23,10 @@ namespace LocalFileSharing.Domain
         private readonly TcpClient client;
 
         public FileSharingClient(IPAddress ipAddress, int port)
-            : this(new TcpClient(ipAddress, port))
-        { }
+            : this(new TcpClient(ipAddress, port)) { }
 
-        public FileSharingClient(TcpClient client)
-        {
-            if (client is null)
-            {
+        public FileSharingClient(TcpClient client) {
+            if (client is null) {
                 throw new ArgumentNullException(nameof(client));
             }
 
@@ -46,34 +41,28 @@ namespace LocalFileSharing.Domain
             string path,
             IProgress<SendFileProgressReport> progress,
             CancellationToken cancellationToken
-        )
-        {
-            if (string.IsNullOrWhiteSpace(path))
-            {
+        ) {
+            if (string.IsNullOrWhiteSpace(path)) {
                 throw new ArgumentException(
                     "The path must be provided.",
                     nameof(path)
                 );
             }
 
-            if (!File.Exists(path))
-            {
+            if (!File.Exists(path)) {
                 throw new FileNotFoundException($"File was not found.", path);
             }
 
-            await Task.Run(() =>
-            {
+            await Task.Run(() => {
                 FileInfo fileInfo = new FileInfo(path);
 
-                FileData fileData = new FileData()
-                {
+                FileData fileData = new FileData() {
                     FileId = Guid.NewGuid(),
                     FilePath = path,
                     FileSize = fileInfo.Length
                 };
 
-                if (cancellationToken.IsCancellationRequested)
-                {
+                if (cancellationToken.IsCancellationRequested) {
                     ReportSendProgress(progress, fileData, 0, SendFileState.Cancelled);
                     return;
                 }
@@ -81,8 +70,7 @@ namespace LocalFileSharing.Domain
                 fileData.FileSha256Hash = fileHash.ComputeHash(path);
                 ReportSendProgress(progress, fileData, 0, SendFileState.Hashing);
 
-                if (cancellationToken.IsCancellationRequested)
-                {
+                if (cancellationToken.IsCancellationRequested) {
                     ReportSendProgress(progress, fileData, 0, SendFileState.Cancelled);
                     return;
                 }
@@ -92,33 +80,27 @@ namespace LocalFileSharing.Domain
                 SendFileInitialContent(initialContent);
                 ReportSendProgress(progress, fileData, 0, SendFileState.Initializing);
 
-                if (cancellationToken.IsCancellationRequested)
-                {
+                if (cancellationToken.IsCancellationRequested) {
                     ReportSendProgress(progress, fileData, 0, SendFileState.Cancelled);
                     return;
                 }
 
                 ResponseType responseToInitial = ReceiveResponse();
-                if (responseToInitial == ResponseType.ReceiveFileCancel)
-                {
+                if (responseToInitial == ResponseType.ReceiveFileCancel) {
                     ReportSendProgress(progress, fileData, 0, SendFileState.Cancelled);
                     return;
                 }
-                else if (responseToInitial != ResponseType.ReceiveFileInitial)
-                {
+                else if (responseToInitial != ResponseType.ReceiveFileInitial) {
                     ReportSendProgress(progress, fileData, 0, SendFileState.Failed);
                     throw new ArgumentException();
                 }
 
-                using (BinaryReader stream = new BinaryReader(File.OpenRead(path)))
-                {
+                using (BinaryReader stream = new BinaryReader(File.OpenRead(path))) {
                     byte[] fileBuffer = new byte[BlockBufferSize];
                     long bytesSent = 0;
-                    do
-                    {
+                    do {
                         int bytesReadNumber = stream.Read(fileBuffer, 0, fileBuffer.Length);
-                        if (bytesReadNumber == 0)
-                        {
+                        if (bytesReadNumber == 0) {
                             break;
                         }
 
@@ -128,13 +110,11 @@ namespace LocalFileSharing.Domain
                         SendRegularContent(regularContent);
 
                         ResponseType responseToRegular = ReceiveResponse();
-                        if (responseToRegular == ResponseType.ReceiveFileCancel)
-                        {
+                        if (responseToRegular == ResponseType.ReceiveFileCancel) {
                             ReportSendProgress(progress, fileData, 0, SendFileState.Cancelled);
                             return;
                         }
-                        else if (responseToRegular != ResponseType.ReceiveFileRegular)
-                        {
+                        else if (responseToRegular != ResponseType.ReceiveFileRegular) {
                             ReportSendProgress(progress, fileData, 0, SendFileState.Failed);
                             throw new ArgumentException();
                         }
@@ -142,8 +122,7 @@ namespace LocalFileSharing.Domain
                         bytesSent += bytesReadNumber;
                         ReportSendProgress(progress, fileData, bytesSent, SendFileState.Sending);
 
-                        if (cancellationToken.IsCancellationRequested)
-                        {
+                        if (cancellationToken.IsCancellationRequested) {
                             ReportSendProgress(progress, fileData, 0, SendFileState.Cancelled);
                             return;
                         }
@@ -154,13 +133,11 @@ namespace LocalFileSharing.Domain
                 SendFileEndContent(endContent);
 
                 ResponseType responseToEnd = ReceiveResponse();
-                if (responseToEnd == ResponseType.ReceiveFileCancel)
-                {
+                if (responseToEnd == ResponseType.ReceiveFileCancel) {
                     ReportSendProgress(progress, fileData, 0, SendFileState.Cancelled);
                     return;
                 }
-                else if (responseToEnd != ResponseType.ReceiveFileEnd)
-                {
+                else if (responseToEnd != ResponseType.ReceiveFileEnd) {
                     ReportSendProgress(progress, fileData, 0, SendFileState.Failed);
                     throw new Exception();
                 }
@@ -173,10 +150,8 @@ namespace LocalFileSharing.Domain
             IProgress<SendFileProgressReport> progress,
             FileData fileData,
             long bytesSent,
-            SendFileState sendFileState)
-        {
-            SendFileProgressReport report = new SendFileProgressReport
-            {
+            SendFileState sendFileState) {
+            SendFileProgressReport report = new SendFileProgressReport {
                 SendFileState = sendFileState,
                 FileData = fileData,
                 BytesSent = bytesSent
@@ -188,10 +163,8 @@ namespace LocalFileSharing.Domain
             IProgress<ReceiveFileProgressReport> progress,
             FileData fileData,
             long bytesReceived,
-            ReceiveFileState receiveFileState)
-        {
-            ReceiveFileProgressReport report = new ReceiveFileProgressReport
-            {
+            ReceiveFileState receiveFileState) {
+            ReceiveFileProgressReport report = new ReceiveFileProgressReport {
                 ReceiveFileState = receiveFileState,
                 FileData = fileData,
                 BytesRecived = bytesReceived
@@ -199,30 +172,25 @@ namespace LocalFileSharing.Domain
             progress?.Report(report);
         }
 
-        private ResponseType ReceiveResponse()
-        {
+        private ResponseType ReceiveResponse() {
             int length = ReceiveLength();
             byte[] buffer = client.ReceiveBytes(length);
             UnwrapMessageData(buffer, out MessageType type, out FileBaseContent content);
 
-            if (type != MessageType.Response)
-            {
+            if (type != MessageType.Response) {
                 throw new ArgumentException();
             }
 
             ResponseContent response = content as ResponseContent;
-            if (response is null)
-            {
+            if (response is null) {
                 throw new InvalidCastException();
             }
 
             return response.Response;
         }
 
-        private void SendFileInitialContent(FileInitialContent initialContent)
-        {
-            if (initialContent is null)
-            {
+        private void SendFileInitialContent(FileInitialContent initialContent) {
+            if (initialContent is null) {
                 throw new ArgumentNullException(nameof(initialContent));
             }
 
@@ -231,10 +199,8 @@ namespace LocalFileSharing.Domain
             client.SendBytes(buffer);
         }
 
-        private void SendRegularContent(FileRegularContent regularContent)
-        {
-            if (regularContent is null)
-            {
+        private void SendRegularContent(FileRegularContent regularContent) {
+            if (regularContent is null) {
                 throw new ArgumentNullException(nameof(regularContent));
             }
 
@@ -243,10 +209,8 @@ namespace LocalFileSharing.Domain
             client.SendBytes(buffer);
         }
 
-        private void SendFileEndContent(FileEndContent endContent)
-        {
-            if (endContent is null)
-            {
+        private void SendFileEndContent(FileEndContent endContent) {
+            if (endContent is null) {
                 throw new ArgumentNullException(nameof(endContent));
             }
 
@@ -255,15 +219,12 @@ namespace LocalFileSharing.Domain
             client.SendBytes(buffer);
         }
 
-        private byte[] WrapContent(FileBaseContent content, MessageType message)
-        {
-            if (content is null)
-            {
+        private byte[] WrapContent(FileBaseContent content, MessageType message) {
+            if (content is null) {
                 throw new ArgumentNullException(nameof(content));
             }
 
-            if (message == MessageType.Unspecified)
-            {
+            if (message == MessageType.Unspecified) {
                 throw new ArgumentException();
             }
 
@@ -278,15 +239,12 @@ namespace LocalFileSharing.Domain
             string downloadDirectory,
             IProgress<ReceiveFileProgressReport> progress,
             CancellationToken cancellationToken
-        )
-        {
-            if (string.IsNullOrWhiteSpace(downloadDirectory))
-            {
+        ) {
+            if (string.IsNullOrWhiteSpace(downloadDirectory)) {
                 throw new ArgumentException();
             }
 
-            await Task.Run(() =>
-            {
+            await Task.Run(() => {
                 FileData fileData = new FileData();
 
                 bool initialized = false;
@@ -294,13 +252,11 @@ namespace LocalFileSharing.Domain
                 string fileName = string.Empty;
                 BinaryWriter stream = null;
                 long bytesReceived = 0;
-                do
-                {
+                do {
                     int length = ReceiveLength();
                     byte[] buffer = client.ReceiveBytes(length);
                     UnwrapMessageData(buffer, out MessageType type, out FileBaseContent content);
-                    if (type == MessageType.SendFileInitial)
-                    {
+                    if (type == MessageType.SendFileInitial) {
                         FileInitialContent initialContent = (FileInitialContent)content;
 
                         fileData.FileId = initialContent.FileId;
@@ -315,8 +271,7 @@ namespace LocalFileSharing.Domain
 
                         initialized = true;
                     }
-                    else if (type == MessageType.SendFileRegular && initialized)
-                    {
+                    else if (type == MessageType.SendFileRegular && initialized) {
                         FileRegularContent regularContent = (FileRegularContent)content;
                         stream.Write(regularContent.Block, 0, regularContent.Block.Length);
                         bytesReceived += regularContent.Block.Length;
@@ -325,8 +280,7 @@ namespace LocalFileSharing.Domain
 
                         SendResponse(fileData.FileId, ResponseType.ReceiveFileRegular);
                     }
-                    else if (type == MessageType.SendFileEnd && initialized)
-                    {
+                    else if (type == MessageType.SendFileEnd && initialized) {
                         //SendFileEndContent initialContent = (SendFileEndContent)content;
                         received = true;
 
@@ -335,8 +289,7 @@ namespace LocalFileSharing.Domain
                         SendResponse(fileData.FileId, ResponseType.ReceiveFileEnd);
                         break;
                     }
-                    else if (type == MessageType.SendFileCancel && initialized)
-                    {
+                    else if (type == MessageType.SendFileCancel && initialized) {
                         //SendFileCancelContent initialContent = (SendFileCancelContent)content;
 
                         ReportReceiveProgress(progress, fileData, 0, ReceiveFileState.Cancelled);
@@ -344,24 +297,21 @@ namespace LocalFileSharing.Domain
                         SendResponse(fileData.FileId, ResponseType.ReceiveFileCancel);
                         break;
                     }
-                    if (cancellationToken.IsCancellationRequested)
-                    {
+                    if (cancellationToken.IsCancellationRequested) {
                         ReportReceiveProgress(progress, fileData, 0, ReceiveFileState.Cancelled);
                         break;
                     }
                 } while (true);
                 stream?.Close();
 
-                if (!received)
-                {
+                if (!received) {
                     return;
                 }
 
                 ReportReceiveProgress(progress, fileData, 0, ReceiveFileState.Hashing);
                 byte[] receivedFileSha256Hash = fileHash.ComputeHash(fileData.FilePath);
 
-                if (!fileData.FileSha256Hash.SequenceEqual(receivedFileSha256Hash))
-                {
+                if (!fileData.FileSha256Hash.SequenceEqual(receivedFileSha256Hash)) {
                     ReportReceiveProgress(progress, fileData, 0, ReceiveFileState.Failed);
                     return;
                 }
@@ -372,18 +322,15 @@ namespace LocalFileSharing.Domain
             });
         }
 
-        public void ReceiveFile(string downloadDirectory)
-        {
+        public void ReceiveFile(string downloadDirectory) {
             bool initialized = false;
             string fileName = string.Empty;
             FileStream stream = null;
-            do
-            {
+            do {
                 int length = ReceiveLength();
                 byte[] buffer = client.ReceiveBytes(length);
                 UnwrapMessageData(buffer, out MessageType type, out FileBaseContent content);
-                if (type == MessageType.SendFileInitial)
-                {
+                if (type == MessageType.SendFileInitial) {
                     FileInitialContent inititalContent = (FileInitialContent)content;
                     initialized = true;
                     fileName = inititalContent.FileName;
@@ -391,23 +338,20 @@ namespace LocalFileSharing.Domain
 
                     SendResponse(Guid.NewGuid(), ResponseType.ReceiveFileInitial);
                 }
-                else if (type == MessageType.SendFileRegular && initialized)
-                {
+                else if (type == MessageType.SendFileRegular && initialized) {
                     FileRegularContent regularContent = (FileRegularContent)content;
                     stream.Write(regularContent.Block, 0, regularContent.Block.Length);
 
                     SendResponse(Guid.NewGuid(), ResponseType.ReceiveFileRegular);
                 }
-                else if (type == MessageType.SendFileEnd && initialized)
-                {
+                else if (type == MessageType.SendFileEnd && initialized) {
                     //SendFileEndContent initialContent = (SendFileEndContent)content;
 
                     SendResponse(Guid.NewGuid(), ResponseType.ReceiveFileEnd);
 
                     break;
                 }
-                else if (type == MessageType.SendFileCancel && initialized)
-                {
+                else if (type == MessageType.SendFileCancel && initialized) {
                     //SendFileCancelContent initialContent = (SendFileCancelContent)content;
                     File.Delete(Path.Combine(downloadDirectory, fileName));
 
@@ -418,10 +362,8 @@ namespace LocalFileSharing.Domain
             stream?.Close();
         }
 
-        private void SendResponse(Guid fileId, ResponseType response)
-        {
-            if (response == ResponseType.Unspecified)
-            {
+        private void SendResponse(Guid fileId, ResponseType response) {
+            if (response == ResponseType.Unspecified) {
                 throw new ArgumentException();
             }
 
@@ -433,17 +375,14 @@ namespace LocalFileSharing.Domain
             client.SendBytes(buffer);
         }
 
-        private int ReceiveLength()
-        {
+        private int ReceiveLength() {
             byte[] bufferLength = client.ReceiveBytes(lengthPrefixWrapper.LengthPrefixSize);
             int length = BitConverter.ToInt32(bufferLength, 0);
             return length;
         }
 
-        private void UnwrapMessageData(byte[] buffer, out MessageType type, out FileBaseContent content)
-        {
-            if (buffer is null)
-            {
+        private void UnwrapMessageData(byte[] buffer, out MessageType type, out FileBaseContent content) {
+            if (buffer is null) {
                 throw new ArgumentNullException(nameof(buffer));
             }
 

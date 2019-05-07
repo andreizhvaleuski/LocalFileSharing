@@ -2,21 +2,16 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace LocalFileSharing.Network.Sockets
-{
-    public class TcpClient : TcpSocketBase
-    {
+namespace LocalFileSharing.Network.Sockets {
+    public class TcpClient : TcpSocketBase {
         protected readonly Socket client;
 
-        public TcpClient(IPAddress ipAddress, int port)
-        {
-            if (ipAddress is null)
-            {
+        public TcpClient(IPAddress ipAddress, int port) {
+            if (ipAddress is null) {
                 throw new ArgumentNullException(nameof(ipAddress));
             }
 
-            if (port >= MinAllowedPort && port <= MaxAllowedPort)
-            {
+            if (port >= MinAllowedPort && port <= MaxAllowedPort) {
                 throw new ArgumentOutOfRangeException(
                     nameof(port),
                     port,
@@ -33,10 +28,8 @@ namespace LocalFileSharing.Network.Sockets
             client.Connect(ipEndPoint);
         }
 
-        public TcpClient(Socket connectedClient)
-        {
-            if (!connectedClient.Connected)
-            {
+        public TcpClient(Socket connectedClient) {
+            if (!connectedClient.Connected) {
                 throw new ArgumentException(
                     $"The client is not connected.",
                     nameof(connectedClient)
@@ -46,15 +39,12 @@ namespace LocalFileSharing.Network.Sockets
             client = connectedClient;
         }
 
-        public virtual void SendBytes(byte[] buffer)
-        {
-            if (buffer is null)
-            {
+        public virtual void SendBytes(byte[] buffer) {
+            if (buffer is null) {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
-            if (buffer.Length == 0)
-            {
+            if (buffer.Length == 0) {
                 throw new ArgumentException(
                     $"The buffer cannot be empty.",
                     nameof(buffer)
@@ -64,10 +54,8 @@ namespace LocalFileSharing.Network.Sockets
             client.Send(buffer);
         }
 
-        public virtual byte[] ReceiveBytes(int bytesNumber)
-        {
-            if (bytesNumber <= 0)
-            {
+        public virtual byte[] ReceiveBytes(int bytesNumber) {
+            if (bytesNumber <= 0) {
                 throw new ArgumentOutOfRangeException(
                     $"The bytes number must be greater than zero.",
                     nameof(bytesNumber)
@@ -76,17 +64,15 @@ namespace LocalFileSharing.Network.Sockets
 
             byte[] buffer = new byte[bytesNumber];
             int totalBytesReceivedNumber = 0;
-            do
-            {
-                int currentBytesReceivedNumber= client.Receive(
+            do {
+                int currentBytesReceivedNumber = client.Receive(
                     buffer,
                     totalBytesReceivedNumber,
                     bytesNumber - totalBytesReceivedNumber,
                     SocketFlags.None
                 );
 
-                if (currentBytesReceivedNumber <= 0)
-                {
+                if (currentBytesReceivedNumber <= 0) {
                     return null;
                 }
 
@@ -96,8 +82,7 @@ namespace LocalFileSharing.Network.Sockets
             return buffer;
         }
 
-        public virtual void Close()
-        {
+        public virtual void Close() {
             client.Shutdown(SocketShutdown.Both);
             client.Close();
         }

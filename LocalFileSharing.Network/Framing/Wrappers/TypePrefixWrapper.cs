@@ -2,21 +2,16 @@
 
 using LocalFileSharing.Network.Common;
 
-namespace LocalFileSharing.Network.Framing.Wrappers
-{
-    public class TypePrefixWrapper : ITypePrefixWrapper
-    {
+namespace LocalFileSharing.Network.Framing.Wrappers {
+    public class TypePrefixWrapper : ITypePrefixWrapper {
         public int TypePrefixSize => MessageTypeConverter.MessageTypeLength;
 
-        public byte[] Wrap(byte[] unwrappedBuffer, MessageType type)
-        {
-            if (unwrappedBuffer is null)
-            {
+        public byte[] Wrap(byte[] unwrappedBuffer, MessageType type) {
+            if (unwrappedBuffer is null) {
                 throw new ArgumentNullException(nameof(unwrappedBuffer));
             }
 
-            if (type == MessageType.Unspecified)
-            {
+            if (type == MessageType.Unspecified) {
                 throw new ArgumentException(
                     $"The argument {nameof(type)} cannot be with {MessageType.Unspecified} value.",
                     nameof(type)
@@ -31,15 +26,12 @@ namespace LocalFileSharing.Network.Framing.Wrappers
             return wrappedBuffer;
         }
 
-        public MessageType GetTypePrefixValue(byte[] wrappedBuffer)
-        {
-            if (wrappedBuffer is null)
-            {
+        public MessageType GetTypePrefixValue(byte[] wrappedBuffer) {
+            if (wrappedBuffer is null) {
                 throw new ArgumentNullException(nameof(wrappedBuffer));
             }
 
-            if (wrappedBuffer.Length < TypePrefixSize)
-            {
+            if (wrappedBuffer.Length < TypePrefixSize) {
                 throw new ArgumentException(
                     $"The {nameof(wrappedBuffer)} length cannot be less than {TypePrefixSize} bytes.",
                     nameof(wrappedBuffer)

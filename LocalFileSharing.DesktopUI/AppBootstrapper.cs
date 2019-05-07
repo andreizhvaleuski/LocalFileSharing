@@ -9,19 +9,15 @@ using LocalFileSharing.DesktopUI.ViewModels;
 
 using Unity;
 
-namespace LocalFileSharing.DesktopUI
-{
-    public class AppBootstrapper : BootstrapperBase
-    {
+namespace LocalFileSharing.DesktopUI {
+    public class AppBootstrapper : BootstrapperBase {
         private IUnityContainer _container;
 
-        public AppBootstrapper()
-        {
+        public AppBootstrapper() {
             Initialize();
         }
 
-        protected override void Configure()
-        {
+        protected override void Configure() {
             _container = new UnityContainer();
 
             _container
@@ -33,29 +29,24 @@ namespace LocalFileSharing.DesktopUI
                 .Where(type => type.IsClass)
                 .Where(type => type.Name.EndsWith("ViewModel"))
                 .ToList()
-                .ForEach(viewModelType =>
-                {
+                .ForEach(viewModelType => {
                     _container.RegisterType(viewModelType, viewModelType.ToString());
                 });
         }
 
-        protected override object GetInstance(Type service, string key)
-        {
+        protected override object GetInstance(Type service, string key) {
             return _container.Resolve(service, key);
         }
 
-        protected override IEnumerable<object> GetAllInstances(Type service)
-        {
+        protected override IEnumerable<object> GetAllInstances(Type service) {
             return _container.ResolveAll(service);
         }
 
-        protected override void BuildUp(object instance)
-        {
+        protected override void BuildUp(object instance) {
             _container.BuildUp(instance);
         }
 
-        protected override void OnStartup(object sender, StartupEventArgs e)
-        {
+        protected override void OnStartup(object sender, StartupEventArgs e) {
             DisplayRootViewFor<ShellViewModel>();
         }
     }

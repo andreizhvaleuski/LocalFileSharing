@@ -1,37 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LocalFileSharing.Network.Common.Content
-{
+namespace LocalFileSharing.Network.Common.Content {
     [Serializable]
-    public class FileInitialContent : FileBaseContent
-    {
-        public FileInitialContent(Guid fileId, string fileName, long fileSize, byte[] sha256FileHash)
-            : base(fileId)
-        {
-            if (string.IsNullOrWhiteSpace(fileName))
-            {
+    public class FileInitialContent : FileBaseContent {
+        public FileInitialContent(
+            Guid fileId, 
+            string fileName,
+            long fileSize, 
+            byte[] sha256FileHash)
+            : base(fileId) {
+            if (string.IsNullOrWhiteSpace(fileName)) {
                 throw new ArgumentException(
                     $"The file name can not be null or whitespace.",
                     nameof(fileName)
                 );
             }
 
-            if (fileSize <= 0)
-            {
+            if (fileSize <= 0) {
                 throw new ArgumentOutOfRangeException(
                     $"The file size must be greater than 0 bytes.",
                     nameof(fileSize)
                 );
             }
 
-            if (sha256FileHash is null)
-            {
+            if (sha256FileHash is null) {
                 throw new ArgumentNullException(nameof(sha256FileHash));
             }
 
-            if (sha256FileHash.Length <= 0)
-            {
+            if (sha256FileHash.Length <= 0) {
                 throw new ArgumentException(
                     $"The file hash length must be greater than 0.",
                     nameof(sha256FileHash)
@@ -44,8 +41,7 @@ namespace LocalFileSharing.Network.Common.Content
         }
 
         public FileInitialContent(string fileName, long fileSize, byte[] sha256FileHash)
-            : this(Guid.NewGuid(), fileName, fileSize, sha256FileHash)
-        { }
+            : this(Guid.NewGuid(), fileName, fileSize, sha256FileHash) { }
 
         public string FileName { get; private set; }
 

@@ -1,15 +1,12 @@
 ﻿using System;
 
-namespace LocalFileSharing.Network.Common.Content
-{
+namespace LocalFileSharing.Network.Common.Content {
     [Serializable]
-    public class ResponseContent : FileBaseContent
-    {
+    public class ResponseContent : FileBaseContent {
         public ResponseType Response { get; private set; }
 
         public ResponseContent(Guid fileId, ResponseType type)
-            : base(fileId)
-        {
+            : base(fileId) {
             Response = type;
         }
     }

@@ -1,7 +1,5 @@
-﻿namespace LocalFileSharing.Domain.Infrastructure
-{
-    public enum SendFileState
-    {
+﻿namespace LocalFileSharing.Domain.Infrastructure {
+    public enum SendFileState {
         Unspecified = 0,
         Hashing = 1,
         Initializing = 2,

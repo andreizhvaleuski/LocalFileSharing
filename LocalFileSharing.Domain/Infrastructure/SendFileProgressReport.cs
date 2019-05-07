@@ -1,7 +1,5 @@
-﻿namespace LocalFileSharing.Domain.Infrastructure
-{
-    public class SendFileProgressReport
-    {
+﻿namespace LocalFileSharing.Domain.Infrastructure {
+    public class SendFileProgressReport {
         public SendFileState SendFileState { get; set; }
 
         public FileData FileData { get; set; }

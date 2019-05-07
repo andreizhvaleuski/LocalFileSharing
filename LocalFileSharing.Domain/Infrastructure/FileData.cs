@@ -1,9 +1,7 @@
 ﻿using System;
 
-namespace LocalFileSharing.Domain.Infrastructure
-{
-    public class FileData
-    {
+namespace LocalFileSharing.Domain.Infrastructure {
+    public class FileData {
         public Guid FileId { get; set; }
 
         public string FilePath { get; set; }

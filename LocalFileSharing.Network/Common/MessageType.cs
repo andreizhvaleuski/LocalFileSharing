@@ -1,7 +1,5 @@
-﻿namespace LocalFileSharing.Network.Common
-{
-    public enum MessageType
-    {
+﻿namespace LocalFileSharing.Network.Common {
+    public enum MessageType {
         Unspecified = 0,
         Keepalive = 1,
         SendFileInitial = 2,

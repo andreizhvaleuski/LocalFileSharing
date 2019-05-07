@@ -1,7 +1,5 @@
-﻿namespace LocalFileSharing.Domain.Infrastructure
-{
-    public enum ReceiveFileState
-    {
+﻿namespace LocalFileSharing.Domain.Infrastructure {
+    public enum ReceiveFileState {
         Unspecified = 0,
         Initializing = 1,
         Sending = 2,

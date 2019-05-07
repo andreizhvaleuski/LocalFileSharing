@@ -1,7 +1,5 @@
-﻿namespace LocalFileSharing.Domain.Infrastructure
-{
-    public interface IFileHash
-    {
+﻿namespace LocalFileSharing.Domain.Infrastructure {
+    public interface IFileHash {
         byte[] ComputeHash(string path);
     }
 }
