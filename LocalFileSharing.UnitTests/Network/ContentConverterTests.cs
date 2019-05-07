@@ -47,8 +47,9 @@ namespace LocalFileSharing.UnitTests.Network {
             );
             byte[] contentBuffer = contentConverter.GetBytes(expectedContent);
 
-            ContentBase actualContent = contentConverter.GetContent(contentBuffer);
-            Assert.AreEqual(expectedContent, actualContent);
+            ResponseContent actualContent = (ResponseContent)contentConverter.GetContent(contentBuffer);
+            Assert.AreEqual(expectedContent.OperationID, actualContent.OperationID);
+            Assert.AreEqual(expectedContent.Response, actualContent.Response);
             Assert.IsInstanceOf(expectedContent.GetType(), actualContent);
         }
 
