@@ -39,7 +39,7 @@ namespace LocalFileSharing.Network.Common {
 
             using (MemoryStream stream = new MemoryStream(contentBuffer)) {
                 IFormatter formatter = new BinaryFormatter();
-                content = formatter.Deserialize(stream) as ContentBase;
+                content = (ContentBase)formatter.Deserialize(stream);
             }
 
             return content;
