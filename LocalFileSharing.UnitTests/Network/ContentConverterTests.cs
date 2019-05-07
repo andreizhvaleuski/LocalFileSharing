@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 using LocalFileSharing.Network.Common;
 using LocalFileSharing.Network.Common.Content;
@@ -47,6 +50,21 @@ namespace LocalFileSharing.UnitTests.Network {
             ContentBase actualContent = contentConverter.GetContent(contentBuffer);
             Assert.AreEqual(expectedContent, actualContent);
             Assert.IsInstanceOf(expectedContent.GetType(), actualContent);
+        }
+
+        [Test]
+        public void GetContent_InvalidContentBuffer_ThrowsInvalidCastException() {
+            object obj = "hello!";
+            byte[] contentBuffer = null;
+            using (MemoryStream stream = new MemoryStream()) {
+                IFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(stream, obj);
+                contentBuffer = stream.ToArray();
+            }
+
+            Assert.Throws<InvalidCastException>(() =>
+                contentConverter.GetContent(contentBuffer)
+            );
         }
 
         [Test]
