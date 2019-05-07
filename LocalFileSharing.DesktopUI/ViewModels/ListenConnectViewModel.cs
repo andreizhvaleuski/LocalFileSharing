@@ -1,32 +1,51 @@
 ﻿using System.Net;
+using System.Threading.Tasks;
 
 using Caliburn.Micro;
+using LocalFileSharing.DesktopUI.Messages;
 using LocalFileSharing.Network.Domain;
 using LocalFileSharing.Network.Sockets;
 
+using Socs = System.Net.Sockets;
+
 namespace LocalFileSharing.DesktopUI.ViewModels {
     public class ListenConnectViewModel : Screen {
-        private string _listenIP = IPAddress.Any.ToString();
+        private IPAddress _listenIP = IPAddress.Any;
         private int _listenPort = TcpSocketBase.MinAllowedPort;
         private bool _listening;
 
-        private string _connectIP;
-        private int _connectPort;
+        private IPAddress _connectIP = IPAddress.Loopback;
+        private int _connectPort = TcpSocketBase.MinAllowedPort;
         private bool _connecting;
 
         private FileSharingServer _listenFileSharingClient;
         private FileSharingClient _connectFileSharingClient;
 
-        public ListenConnectViewModel() {
-            _listenFileSharingClient = new FileSharingServer();
+        private readonly IEventAggregator _eventAgregator;
 
+        public ListenConnectViewModel(IEventAggregator eventAggregator) {
+            _listenFileSharingClient = new FileSharingServer();
+            _eventAgregator = eventAggregator;
             GetListenIPEndPoint();
         }
 
         private async void GetListenIPEndPoint() {
             IPEndPoint endPoint = await _listenFileSharingClient.GetServerIPEndPointAsync(default);
-            ListenIP = endPoint.Address.ToString();
+            ListenIP = endPoint.Address;
             ListenPort = endPoint.Port;
+        }
+
+        public IPAddress ListenIP {
+            get => _listenIP;
+            private set {
+                if (_listenIP == value) {
+                    return;
+                }
+
+                _listenIP = value;
+                NotifyOfPropertyChange(() => ListenIP);
+                NotifyOfPropertyChange(() => CanListen);
+            }
         }
 
         public int ListenPort {
@@ -42,20 +61,22 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
             }
         }
 
-        public string ListenIP {
-            get => _listenIP;
+        public bool Listening {
+            get => _listening;
             private set {
-                if (_listenIP == value) {
+                if (_listening == value) {
                     return;
                 }
 
-                _listenIP = value;
-                NotifyOfPropertyChange(() => ListenIP);
+                _listening = value;
+                NotifyOfPropertyChange(() => Listening);
                 NotifyOfPropertyChange(() => CanListen);
+                NotifyOfPropertyChange(() => CanConnect);
+                NotifyOfPropertyChange(() => CanClear);
             }
         }
 
-        public string ConnectIP {
+        public IPAddress ConnectIP {
             get => _connectIP;
             set {
                 if (_connectIP == value) {
@@ -78,32 +99,51 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
                 _connectPort = value;
                 NotifyOfPropertyChange(() => ConnectPort);
                 NotifyOfPropertyChange(() => CanConnect);
+                NotifyOfPropertyChange(() => CanClear);
+                NotifyOfPropertyChange(() => CanListen);
             }
         }
 
-        public bool CanListen => 
-            !_connecting;
+        public bool Connecting {
+            get => _connecting;
+            private set {
+                if (_connecting == value) {
+                    return;
+                }
 
-        public void Listen() {
-            _listening = true;
-
-            _listening = false;
+                _connecting = value;
+                NotifyOfPropertyChange(() => Connecting);
+                NotifyOfPropertyChange(() => CanConnect);
+                NotifyOfPropertyChange(() => CanClear);
+                NotifyOfPropertyChange(() => CanListen);
+            }
         }
 
-        public bool CanConnect => 
-            IPAddress.TryParse(_connectIP, out _) && 
-            ConnectPort >= TcpSocketBase.MinAllowedPort && 
+        public bool CanListen => !Connecting && !Listening;
+
+        public async void Listen() {
+            Listening = true;
+            await Task.Delay(3000);
+            _eventAgregator.PublishOnUIThread(new ErrorMessage("404", "Not found"));
+            Listening = false;
+        }
+
+        public bool CanConnect =>
+            ConnectIP.AddressFamily == Socs.AddressFamily.InterNetwork &&
+            ConnectPort >= TcpSocketBase.MinAllowedPort &&
             ConnectPort <= TcpSocketBase.MaxAllowedPort &&
-            !_listening;
+            !Listening && !Connecting;
 
-        public void Connect() {
-            _connecting = true;
-
-            _connecting = false;
+        public async void Connect() {
+            Connecting = true;
+            await Task.Delay(1000);
+            Connecting = false;
         }
+
+        public bool CanClear => !(Listening || Connecting);
 
         public void Clear() {
-            ConnectIP = IPAddress.Any.ToString();
+            ConnectIP = IPAddress.Any;
             ConnectPort = TcpSocketBase.MinAllowedPort;
         }
     }

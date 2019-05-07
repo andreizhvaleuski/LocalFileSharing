@@ -28,6 +28,8 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
 
             DisplayName = "Local File Sharing";
 
+            _eventAggregator.Subscribe(this);
+
             ListenOrConnect();
         }
 
