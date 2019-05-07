@@ -3,8 +3,8 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
-using LocalFileSharing.Network.Common;
-using LocalFileSharing.Network.Common.Content;
+using LocalFileSharing.Network.Framing;
+using LocalFileSharing.Network.Framing.Content;
 
 using NUnit.Framework;
 

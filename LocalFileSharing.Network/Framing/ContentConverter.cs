@@ -3,9 +3,9 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
-using LocalFileSharing.Network.Common.Content;
+using LocalFileSharing.Network.Framing.Content;
 
-namespace LocalFileSharing.Network.Common {
+namespace LocalFileSharing.Network.Framing {
     public class ContentConverter : IContentConverter {
         public byte[] GetBytes(ContentBase content) {
             if (content is null) {

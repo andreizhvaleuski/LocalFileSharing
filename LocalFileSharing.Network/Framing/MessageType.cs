@@ -1,4 +1,4 @@
-﻿namespace LocalFileSharing.Network.Common {
+﻿namespace LocalFileSharing.Network.Framing {
     public enum MessageType {
         Unspecified = 0,
         Keepalive = 1,

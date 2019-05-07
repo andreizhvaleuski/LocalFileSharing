@@ -1,4 +1,4 @@
-﻿using LocalFileSharing.Network.Common;
+﻿using LocalFileSharing.Network.Framing;
 
 namespace LocalFileSharing.Network.Framing {
     public interface ITypePrefixWrapper {

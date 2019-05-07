@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace LocalFileSharing.Network.Common {
+namespace LocalFileSharing.Network.Framing {
     public static class MessageTypeConverter {
         public const int MessageTypeLength = 6;
 

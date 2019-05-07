@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LocalFileSharing.Network.Common.Content {
+namespace LocalFileSharing.Network.Framing.Content {
     [Serializable]
     public class FileInitialContent : ContentBase {
         public FileInitialContent(

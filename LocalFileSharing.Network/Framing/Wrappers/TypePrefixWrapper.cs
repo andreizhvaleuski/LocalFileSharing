@@ -1,6 +1,6 @@
 ﻿using System;
 
-using LocalFileSharing.Network.Common;
+using LocalFileSharing.Network.Framing;
 
 namespace LocalFileSharing.Network.Framing.Wrappers {
     public class TypePrefixWrapper : ITypePrefixWrapper {

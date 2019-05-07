@@ -1,6 +1,6 @@
-﻿using LocalFileSharing.Network.Common.Content;
+﻿using LocalFileSharing.Network.Framing.Content;
 
-namespace LocalFileSharing.Network.Common {
+namespace LocalFileSharing.Network.Framing {
     public interface IContentConverter {
         byte[] GetBytes(ContentBase content);
 

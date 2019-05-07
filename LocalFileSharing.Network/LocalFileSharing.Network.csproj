@@ -41,17 +41,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\Content\ContentBase.cs" />
-    <Compile Include="Common\Content\ResponseContent.cs" />
-    <Compile Include="Common\Content\FileCancelContent.cs" />
-    <Compile Include="Common\Content\FileEndContent.cs" />
-    <Compile Include="Common\Content\FileInitialContent.cs" />
-    <Compile Include="Common\Content\FileRegularContent.cs" />
-    <Compile Include="Common\ContentConverter.cs" />
-    <Compile Include="Common\IContentConverter.cs" />
-    <Compile Include="Common\MessageTypeConverter.cs" />
-    <Compile Include="Common\MessageType.cs" />
-    <Compile Include="Common\ResponseType.cs" />
+    <Compile Include="Framing\Content\ContentBase.cs" />
+    <Compile Include="Framing\Content\ResponseContent.cs" />
+    <Compile Include="Framing\Content\FileCancelContent.cs" />
+    <Compile Include="Framing\Content\FileEndContent.cs" />
+    <Compile Include="Framing\Content\FileInitialContent.cs" />
+    <Compile Include="Framing\Content\FileRegularContent.cs" />
+    <Compile Include="Framing\ContentConverter.cs" />
+    <Compile Include="Framing\IContentConverter.cs" />
+    <Compile Include="Framing\MessageTypeConverter.cs" />
+    <Compile Include="Framing\MessageType.cs" />
+    <Compile Include="Framing\ResponseType.cs" />
     <Compile Include="Framing\ILengthPrefixWrapper.cs" />
     <Compile Include="Framing\ITypePrefixWrapper.cs" />
     <Compile Include="Framing\Wrappers\LengthPrefixWrapper.cs" />

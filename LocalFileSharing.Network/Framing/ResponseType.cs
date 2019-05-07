@@ -1,4 +1,4 @@
-﻿namespace LocalFileSharing.Network.Common {
+﻿namespace LocalFileSharing.Network.Framing {
     public enum ResponseType {
         Unspecified = 0,
         ReceiveFileInitial = 1,

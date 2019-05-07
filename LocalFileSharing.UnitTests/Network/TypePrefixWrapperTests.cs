@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-using LocalFileSharing.Network.Common;
+using LocalFileSharing.Network.Framing;
 using LocalFileSharing.Network.Framing.Wrappers;
 
 using NUnit.Framework;

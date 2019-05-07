@@ -6,8 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using LocalFileSharing.Domain.Infrastructure;
-using LocalFileSharing.Network.Common;
-using LocalFileSharing.Network.Common.Content;
+using LocalFileSharing.Network.Framing;
+using LocalFileSharing.Network.Framing.Content;
 using LocalFileSharing.Network.Framing;
 using LocalFileSharing.Network.Framing.Wrappers;
 using LocalFileSharing.Network.Sockets;

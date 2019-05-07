@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LocalFileSharing.Network.Common.Content {
+namespace LocalFileSharing.Network.Framing.Content {
     [Serializable]
     public abstract class ContentBase {
         public Guid OperationID { get; protected set; }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LocalFileSharing.Network.Common.Content {
+namespace LocalFileSharing.Network.Framing.Content {
     [Serializable]
     public class FileRegularContent : ContentBase {
         public FileRegularContent(Guid fileId, byte[] block)
