@@ -1,6 +1,4 @@
-﻿using LocalFileSharing.Network.Framing;
-
-namespace LocalFileSharing.Network.Framing {
+﻿namespace LocalFileSharing.Network.Framing.Wrappers {
     public interface ITypePrefixWrapper {
         int TypePrefixSize { get; }
 

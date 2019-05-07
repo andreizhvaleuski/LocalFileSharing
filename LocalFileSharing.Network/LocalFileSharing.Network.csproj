@@ -52,8 +52,8 @@
     <Compile Include="Framing\MessageTypeConverter.cs" />
     <Compile Include="Framing\MessageType.cs" />
     <Compile Include="Framing\ResponseType.cs" />
-    <Compile Include="Framing\ILengthPrefixWrapper.cs" />
-    <Compile Include="Framing\ITypePrefixWrapper.cs" />
+    <Compile Include="Framing\Wrappers\ILengthPrefixWrapper.cs" />
+    <Compile Include="Framing\Wrappers\ITypePrefixWrapper.cs" />
     <Compile Include="Framing\Wrappers\LengthPrefixWrapper.cs" />
     <Compile Include="Framing\Wrappers\TypePrefixWrapper.cs" />
     <Compile Include="Sockets\TcpClient.cs" />

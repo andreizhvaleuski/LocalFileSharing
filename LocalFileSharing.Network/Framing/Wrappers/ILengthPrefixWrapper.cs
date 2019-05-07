@@ -1,4 +1,4 @@
-﻿namespace LocalFileSharing.Network.Framing {
+﻿namespace LocalFileSharing.Network.Framing.Wrappers {
     public interface ILengthPrefixWrapper {
         int LengthPrefixSize { get; }
 
