@@ -1,27 +1,32 @@
 ﻿using System.Net;
-using System.Net.Sockets;
 
 using Caliburn.Micro;
+using LocalFileSharing.Network.Domain;
+using LocalFileSharing.Network.Sockets;
 
 namespace LocalFileSharing.DesktopUI.ViewModels {
     public class ListenConnectViewModel : Screen {
-        private string _listenIP;
-
-        private int _listenPort;
+        private string _listenIP = IPAddress.Any.ToString();
+        private int _listenPort = TcpSocketBase.MinAllowedPort;
+        private bool _listening;
 
         private string _connectIP;
-
         private int _connectPort;
+        private bool _connecting;
+
+        private FileSharingServer _listenFileSharingClient;
+        private FileSharingClient _connectFileSharingClient;
 
         public ListenConnectViewModel() {
-            string localIP;
-            using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0)) {
-                socket.Connect("8.8.8.8", 65530);
-                IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
-                localIP = endPoint.Address.ToString();
-            }
-            ListenIP = localIP;
-            ListenPort = 65000;
+            _listenFileSharingClient = new FileSharingServer();
+
+            GetListenIPEndPoint();
+        }
+
+        private async void GetListenIPEndPoint() {
+            IPEndPoint endPoint = await _listenFileSharingClient.GetServerIPEndPointAsync(default);
+            ListenIP = endPoint.Address.ToString();
+            ListenPort = endPoint.Port;
         }
 
         public int ListenPort {
@@ -60,7 +65,6 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
                 _connectIP = value;
                 NotifyOfPropertyChange(() => ConnectIP);
                 NotifyOfPropertyChange(() => CanConnect);
-                NotifyOfPropertyChange(() => CanClear);
             }
         }
 
@@ -74,27 +78,33 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
                 _connectPort = value;
                 NotifyOfPropertyChange(() => ConnectPort);
                 NotifyOfPropertyChange(() => CanConnect);
-                NotifyOfPropertyChange(() => CanClear);
             }
         }
 
-        public bool CanListen => true;
+        public bool CanListen => 
+            !_connecting;
 
         public void Listen() {
+            _listening = true;
 
+            _listening = false;
         }
 
-        public bool CanConnect => false;
+        public bool CanConnect => 
+            IPAddress.TryParse(_connectIP, out _) && 
+            ConnectPort >= TcpSocketBase.MinAllowedPort && 
+            ConnectPort <= TcpSocketBase.MaxAllowedPort &&
+            !_listening;
 
         public void Connect() {
+            _connecting = true;
 
+            _connecting = false;
         }
-
-        public bool CanClear => !string.IsNullOrWhiteSpace(ConnectIP) && ConnectPort != 0;
 
         public void Clear() {
             ConnectIP = IPAddress.Any.ToString();
-            ConnectPort = 0;
+            ConnectPort = TcpSocketBase.MinAllowedPort;
         }
     }
 }

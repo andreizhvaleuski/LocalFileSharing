@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:LocalFileSharing.DesktopUI.Styles">
-    
+                    xmlns:local="clr-namespace:LocalFileSharing.DesktopUI.Styles"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
     <FontFamily x:Key="UbuntuLight">pack://application;,,,/Fonts/#Ubuntu Light</FontFamily>
     <FontFamily x:Key="UbuntuLightItalic">pack://application;,,,/Fonts/#Ubuntu Light Italic</FontFamily>
     <FontFamily x:Key="UbuntuMedium">pack://application;,,,/Fonts/#Ubuntu Medium</FontFamily>
@@ -9,6 +10,10 @@
     <FontFamily x:Key="UbuntuRegular">pack://application;,,,/Fonts/#Ubuntu Regular</FontFamily>
     <FontFamily x:Key="UbuntuBold">pack://application;,,,/Fonts/#Ubuntu Bold</FontFamily>
     <FontFamily x:Key="UbuntuBoldItalic">pack://application;,,,/Fonts/#Ubuntu Bold Italic</FontFamily>
+
+    <system:Double x:Key="FontSizeLarge">48</system:Double>
+    <system:Double x:Key="FontSizeRegular">24</system:Double>
+    <system:Double x:Key="FontSizeSmall">14</system:Double>
 
     <Style TargetType="{x:Type Control}" x:Key="ControlBaseStyle">
         <Setter Property="FontFamily" Value="{StaticResource UbuntuRegular}" />

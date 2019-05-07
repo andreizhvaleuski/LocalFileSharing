@@ -97,6 +97,7 @@
     </Compile>
     <Compile Include="AppBootstrapper.cs" />
     <Compile Include="Messages\ConnectedMessage.cs" />
+    <Compile Include="Messages\ErrorMessage.cs" />
     <Compile Include="ViewModels\ConnectedViewModel.cs" />
     <Compile Include="ViewModels\ErrorViewModel.cs" />
     <Compile Include="ViewModels\ListenConnectViewModel.cs" />

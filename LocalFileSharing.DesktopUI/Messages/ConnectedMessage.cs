@@ -1,5 +1,6 @@
 ﻿using System;
-using LocalFileSharing.Domain;
+
+using LocalFileSharing.Network.Domain;
 
 namespace LocalFileSharing.DesktopUI.Messages {
     public class ConnectedMessage {
@@ -9,6 +10,8 @@ namespace LocalFileSharing.DesktopUI.Messages {
             if (fileSharingClient is null) {
                 throw new ArgumentNullException(nameof(fileSharingClient));
             }
+
+            FileSharingClient = fileSharingClient;
         }
     }
 }
