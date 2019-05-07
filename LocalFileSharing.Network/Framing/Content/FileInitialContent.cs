@@ -3,9 +3,9 @@
 namespace LocalFileSharing.Network.Framing.Content {
     [Serializable]
     public class FileInitialContent : FileContentBase {
-        public string FileName { get; private set; }
+        public string FileName { get; protected set; }
 
-        public long FileSize { get; private set; }
+        public long FileSize { get; protected set; }
 
         public FileInitialContent(
             Guid opeartionID,
