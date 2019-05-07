@@ -5,6 +5,7 @@ using System.Net.Sockets;
 namespace LocalFileSharing.Network.Sockets {
     public class TcpServer : TcpSocketBase {
         protected readonly Socket listener;
+
         protected TcpClient connectedClient;
 
         public TcpServer(IPAddress ipAddress, int port) {
@@ -42,8 +43,6 @@ namespace LocalFileSharing.Network.Sockets {
 
         public void StopListening() {
             connectedClient?.Close();
-
-            //listener.Shutdown(SocketShutdown.Both);
             listener.Close();
         }
     }
