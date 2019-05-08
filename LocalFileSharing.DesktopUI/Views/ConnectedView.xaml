@@ -8,20 +8,116 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <ScrollViewer
+            Grid.Column="0"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBlock 
+                    Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                    Text="Connected" 
+                    FontSize="{StaticResource FontSizeRegular}" VerticalAlignment="Center"
+                    Margin="10 0 10 20" HorizontalAlignment="Center"/>
+
+                <TextBlock 
+                    Grid.Row="1" Grid.Column="0"
+                    Text="IP:"
+                    Margin="10 0 5 0" />
+                <TextBlock 
+                    Grid.Row="1" Grid.Column="1"
+                    Text="127.0.0.1" />
+
+                <TextBlock 
+                    Grid.Row="2" Grid.Column="0" 
+                    Text="Port:"
+                    Margin="10 0 5 0" />
+                <TextBlock
+                    Grid.Row="2" Grid.Column="1"
+                    Text="65000" />
+
+                <Button 
+                    Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                    Content="Disconnect" Style="{StaticResource MainButton}"
+                    Margin="10"/>
+
+                <Button 
+                    Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                    Content="Downloads" Style="{StaticResource MainButton}"
+                    Margin="10" />
+
+                <Button 
+                    Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
+                    Content="Uploads" Style="{StaticResource MainButton}"
+                    Margin="10" />
+            </Grid>
+        </ScrollViewer>
+        
+        <ScrollViewer
             Grid.Column="1"
             HorizontalScrollBarVisibility="Auto" 
             VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-                <ProgressBar Minimum="0" Maximum="100" x:Name="Download" Height="50" />
-                <Button x:Name="Receive" Content="Receive" />
-                <ProgressBar Minimum="0" Maximum="100" x:Name="Upload" Height="50" />
-                <Button x:Name="Send" Content="Send" />
-            </StackPanel>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel
+                        Grid.Row="0" Grid.RowSpan="3" Grid.Column="0">
+                        <TextBlock Text="File name:"/>
+                        <TextBlock Text="File size:"/>
+                        <ProgressBar Height="25"/>
+                        <TextBlock Text="Download state:"/>
+                        <TextBlock Text="Send"/>
+                    </StackPanel>
+                    
+                    <StackPanel 
+                        Grid.Row="0" Grid.RowSpan="3" Grid.Column="1">
+                        <Button
+                            Content="Downoload"
+                            Style="{StaticResource MainButton}" 
+                            Margin="10" />
+                        <Button
+                            Content="Cancel"
+                            Style="{StaticResource MainButton}" 
+                            Margin="10" />
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    
+                </Grid>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </UserControl>
