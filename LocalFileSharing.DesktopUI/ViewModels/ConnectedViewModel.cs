@@ -89,11 +89,17 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
         }
 
         private void DownloadReport(object sender, ReceiveFileProgressReport e) {
+            if (e.ReceiveFileState != Network.Domain.States.ReceiveFileState.Sending) {
+                return;
+            }
             Download = e.FileData.FileSize / e.BytesRecived;
             Debug.WriteLine(e.ReceiveFileState);
         }
 
         private void UploadReport(object sender, SendFileProgressReport e) {
+            if (e.SendFileState != Network.Domain.States.SendFileState.Sending) {
+                return;
+            }
             Upload = e.FileData.FileSize / e.BytesSent;
             Debug.WriteLine(e.SendFileState);
         }
