@@ -14,7 +14,7 @@ using LocalFileSharing.Network.Sockets;
 
 namespace LocalFileSharing.Network.Domain {
     public sealed class FileSharingClient {
-        public const int BlockBufferSize = 1024 * 512;
+        public const int BlockBufferSize = 1024 * 1024 * 4;
 
         private readonly ILengthPrefixWrapper _lengthPrefixWrapper;
         private readonly ITypePrefixWrapper _typePrefixWrapper;
