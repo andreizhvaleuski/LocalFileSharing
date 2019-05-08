@@ -7,7 +7,21 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <TextBlock Text="Connected" FontSize="72"
-                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer
+            Grid.Column="1"
+            HorizontalScrollBarVisibility="Auto" 
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <ProgressBar x:Name="Download" Height="50" />
+                <Button x:Name="Receive" Content="Receive" />
+                <ProgressBar x:Name="Upload" Height="50" />
+                <Button x:Name="Send" Content="Send" />
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>
