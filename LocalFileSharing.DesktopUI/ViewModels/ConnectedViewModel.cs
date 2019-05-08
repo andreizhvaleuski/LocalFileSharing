@@ -77,7 +77,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
         public bool CanReceive => !(Sending || Receiving);
 
         public async void Receive() {
-            await FileSharingClient.ReceiveFileAsync(@"D:\Downloads", receiveProgress, default);
+            await FileSharingClient.ReceiveFileAsync(@"F:\Downloads", receiveProgress, default);
         }
 
         public bool CanSend => !(Sending || Receiving);
