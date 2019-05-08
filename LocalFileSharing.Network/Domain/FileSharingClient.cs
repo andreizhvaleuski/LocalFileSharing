@@ -266,7 +266,7 @@ namespace LocalFileSharing.Network.Domain {
                         fileData.FileHash = initialContent.FileHash.ToArray();
                         fileData.FilePath = Path.Combine(downloadDirectory, initialContent.FileName);
 
-                        stream = new BinaryWriter(File.Open(fileData.FilePath, FileMode.Truncate));
+                        stream = new BinaryWriter(File.Open(fileData.FilePath, FileMode.Truncate | FileMode.OpenOrCreate));
 
                         ReportReceiveProgress(progress, fileData, 0, ReceiveFileState.Initializing);
                         SendResponse(fileData.OperationID, ResponseType.ReceiveFileInitial);

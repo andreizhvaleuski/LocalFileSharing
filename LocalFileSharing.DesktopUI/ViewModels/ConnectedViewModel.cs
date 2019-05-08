@@ -84,7 +84,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
 
         public async void Send() {
             string path =
-                @"D:\Downloads\Torrents\Series\Game of Thrones - Игра престолов. Сезон 8. Amedia. 1080p\Game.of.Thrones.s08e04.WEB-DL.1080p.Amedia.mkv";
+                @"D:\Downloads\dotnet-sdk-3.0.100-preview5-011568-win-x64.exe";
             await FileSharingClient.SendFileAsync(path, sendProgress, default);
         }
 
