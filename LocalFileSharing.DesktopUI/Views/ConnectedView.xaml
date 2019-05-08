@@ -17,9 +17,9 @@
             HorizontalScrollBarVisibility="Auto" 
             VerticalScrollBarVisibility="Auto">
             <StackPanel>
-                <ProgressBar x:Name="Download" Height="50" />
+                <ProgressBar Minimum="0" Maximum="100" x:Name="Download" Height="50" />
                 <Button x:Name="Receive" Content="Receive" />
-                <ProgressBar x:Name="Upload" Height="50" />
+                <ProgressBar Minimum="0" Maximum="100" x:Name="Upload" Height="50" />
                 <Button x:Name="Send" Content="Send" />
             </StackPanel>
         </ScrollViewer>

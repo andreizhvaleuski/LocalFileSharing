@@ -84,7 +84,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
 
         public async void Send() {
             string path =
-                @"D:\Downloads\dotnet-sdk-3.0.100-preview5-011568-win-x64.exe";
+                @"D:\Downloads\Torrents\Programs\ubuntu-19.04-desktop-amd64.iso";
             await FileSharingClient.SendFileAsync(path, sendProgress, default);
         }
 
@@ -92,7 +92,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
             if (e.ReceiveFileState != Network.Domain.States.ReceiveFileState.Sending) {
                 return;
             }
-            Download = e.FileData.FileSize / e.BytesRecived;
+            Download = e.BytesRecived * 100 / e.FileData.FileSize;
             Debug.WriteLine(e.ReceiveFileState);
         }
 
@@ -100,7 +100,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
             if (e.SendFileState != Network.Domain.States.SendFileState.Sending) {
                 return;
             }
-            Upload = e.FileData.FileSize / e.BytesSent;
+            Upload = e.BytesSent * 100 / e.FileData.FileSize;
             Debug.WriteLine(e.SendFileState);
         }
     }
