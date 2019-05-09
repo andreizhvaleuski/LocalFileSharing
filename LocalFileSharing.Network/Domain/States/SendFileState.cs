@@ -4,9 +4,8 @@
         Hashing = 1,
         Initializing = 2,
         Sending = 3,
-        Sent = 4,
-        Completed = 5,
-        Cancelled = 6,
-        Failed = 7
+        Completed = 4,
+        Cancelled = 5,
+        Failed = 6
     }
 }
