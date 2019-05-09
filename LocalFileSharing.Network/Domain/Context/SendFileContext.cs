@@ -25,8 +25,10 @@ namespace LocalFileSharing.Network.Domain.Context {
             Reader = reader;
         }
 
-        public override void Close() {
-            Reader.Close();
+        public override void Cancel() {
+            base.Cancel();
+
+            Reader?.Close();
         }
     }
 }

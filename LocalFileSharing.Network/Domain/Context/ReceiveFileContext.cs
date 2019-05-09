@@ -25,8 +25,10 @@ namespace LocalFileSharing.Network.Domain.Context {
             Writer = writer;
         }
 
-        public override void Close() {
-            Writer.Close();
+        public override void Cancel() {
+            base.Cancel();
+
+            Writer?.Close();
         }
     }
 }

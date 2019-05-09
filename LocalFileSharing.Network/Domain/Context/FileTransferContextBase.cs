@@ -7,8 +7,7 @@ namespace LocalFileSharing.Network.Domain.Context {
 
         public bool Cancelled => _isCancelled;
         public bool Failed => _isFailed;
-
-        public abstract void Close();
+        public string FilePath { get; protected set; }
 
         public virtual void Cancel() {
             if (Cancelled) {
