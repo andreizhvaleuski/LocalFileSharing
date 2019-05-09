@@ -26,6 +26,9 @@ namespace LocalFileSharing.Network.Domain {
         private readonly ConcurrentDictionary<Guid, SendFileContext> _sendFileContexts;
         private readonly ConcurrentDictionary<Guid, ReceiveFileContext> _receiveFileContexts;
 
+        private readonly ConcurrentQueue<byte[]> _sendMessages;
+        private readonly ConcurrentQueue<byte[]> _receiveMessages;
+
         private readonly TcpClient client;
 
         public FileSharingClient(IPAddress ipAddress, int port)
