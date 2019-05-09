@@ -55,33 +55,33 @@ namespace LocalFileSharing.UnitTests.Network {
         [TestCase(MessageType.SendFileInitial)]
         [TestCase(MessageType.SendFileCancel)]
         [TestCase(MessageType.Response)]
-        public void GetTypePrefixValue_ValidBuffer_ReturnsMessageType(MessageType expectedType) {
-            byte[] wrappedBuffer = new byte[typePrefixWrapper.TypePrefixSize];
+        public void Unwrap_ValidBuffer_ReturnsMessageType(MessageType expectedType) {
+            byte[] wrappedBuffer = new byte[typePrefixWrapper.PrefixLength];
             byte[] typeBuffer = MessageTypeConverter.GetBytes(expectedType);
             typeBuffer.CopyTo(wrappedBuffer, 0);
 
-            MessageType actualType = typePrefixWrapper.GetTypePrefixValue(wrappedBuffer);
+            MessageType actualType = typePrefixWrapper.Unwrap(wrappedBuffer);
 
             Assert.AreEqual(expectedType, actualType);
         }
 
         [TestCase(sizeof(int) - 1)]
         [TestCase(0)]
-        public void GetTypePrefixValue_BufferWithInvalidLength_ThrowsArgumentNullException(
+        public void Unwrap_BufferWithInvalidLength_ThrowsArgumentNullException(
             int wrappedBufferLength) {
             byte[] wrappedBuffer = new byte[wrappedBufferLength];
 
             ArgumentException ex = Assert.Throws<ArgumentException>(() =>
-                typePrefixWrapper.GetTypePrefixValue(wrappedBuffer));
+                typePrefixWrapper.Unwrap(wrappedBuffer));
             Assert.That(ex.ParamName, Is.EqualTo("wrappedBuffer"));
         }
 
         [Test]
-        public void GetTypePrefixValue_NullBuffer_ThrowsArgumentNullException() {
+        public void Unwrap_NullBuffer_ThrowsArgumentNullException() {
             byte[] wrappedBuffer = null;
 
             ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() =>
-                typePrefixWrapper.GetTypePrefixValue(wrappedBuffer));
+                typePrefixWrapper.Unwrap(wrappedBuffer));
             Assert.That(ex.ParamName, Is.EqualTo("wrappedBuffer"));
         }
     }

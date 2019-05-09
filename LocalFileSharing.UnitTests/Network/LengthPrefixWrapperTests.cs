@@ -41,34 +41,34 @@ namespace LocalFileSharing.UnitTests.Network {
 
         [TestCase(sizeof(int))]
         [TestCase(sizeof(int) + 1)]
-        public void GetLengthPrefixValue_ValidBuffer_ReturnsUnwrappedBufferLength(
+        public void Unwrap_ValidBuffer_ReturnsUnwrappedBufferLength(
             int expectedLength) {
             byte[] wrappedBuffer = new byte[sizeof(int)];
             byte[] lengthBuffer = BitConverter.GetBytes(expectedLength);
             lengthBuffer.CopyTo(wrappedBuffer, 0);
 
-            int actualLength = lengthPrefixWrapper.GetLengthPrefixValue(wrappedBuffer);
+            int actualLength = lengthPrefixWrapper.Unwrap(wrappedBuffer);
 
             Assert.AreEqual(expectedLength, actualLength);
         }
 
         [TestCase(sizeof(int) - 1)]
         [TestCase(0)]
-        public void GetLengthPrefixValue_BufferWithInvalidLength_ThrowsArgumentException(
+        public void Unwrap_BufferWithInvalidLength_ThrowsArgumentException(
             int wrappedBufferLength) {
             byte[] wrappedBuffer = new byte[wrappedBufferLength];
 
             ArgumentException ex = Assert.Throws<ArgumentException>(() =>
-                lengthPrefixWrapper.GetLengthPrefixValue(wrappedBuffer));
+                lengthPrefixWrapper.Unwrap(wrappedBuffer));
             Assert.That(ex.ParamName, Is.EqualTo("wrappedBuffer"));
         }
 
         [Test]
-        public void GetLengthPrefixValue_NullBuffer_ThrowsArgumentNullException() {
+        public void Unwrap_NullBuffer_ThrowsArgumentNullException() {
             byte[] wrappedBuffer = null;
 
             ArgumentNullException ex = Assert.Throws<ArgumentNullException>(() =>
-                lengthPrefixWrapper.GetLengthPrefixValue(wrappedBuffer));
+                lengthPrefixWrapper.Unwrap(wrappedBuffer));
             Assert.That(ex.ParamName, Is.EqualTo("wrappedBuffer"));
         }
     }
