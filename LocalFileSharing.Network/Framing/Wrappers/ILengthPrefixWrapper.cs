@@ -1,9 +1,7 @@
 ﻿namespace LocalFileSharing.Network.Framing.Wrappers {
-    public interface ILengthPrefixWrapper {
-        int LengthPrefixSize { get; }
-
+    public interface ILengthPrefixWrapper : IPrefixWrapper {
         byte[] Wrap(byte[] unwrappedBuffer);
 
-        int GetLengthPrefixValue(byte[] wrappedBuffer);
+        int Unwrap(byte[] wrappedBuffer);
     }
 }

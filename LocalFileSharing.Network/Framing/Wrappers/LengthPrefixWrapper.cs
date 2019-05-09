@@ -2,7 +2,7 @@
 
 namespace LocalFileSharing.Network.Framing.Wrappers {
     public class LengthPrefixWrapper : ILengthPrefixWrapper {
-        public int LengthPrefixSize => sizeof(int);
+        public int PrefixLength => sizeof(int);
 
         public byte[] Wrap(byte[] unwrappedBuffer) {
             if (unwrappedBuffer is null) {
@@ -18,14 +18,14 @@ namespace LocalFileSharing.Network.Framing.Wrappers {
             return wrappedBuffer;
         }
 
-        public int GetLengthPrefixValue(byte[] wrappedBuffer) {
+        public int Unwrap(byte[] wrappedBuffer) {
             if (wrappedBuffer is null) {
                 throw new ArgumentNullException(nameof(wrappedBuffer));
             }
 
-            if (wrappedBuffer.Length < LengthPrefixSize) {
+            if (wrappedBuffer.Length < PrefixLength) {
                 throw new ArgumentException(
-                    $"The {nameof(wrappedBuffer)} length cannot be less than {LengthPrefixSize} bytes.",
+                    $"The {nameof(wrappedBuffer)} length cannot be less than {PrefixLength} bytes.",
                     nameof(wrappedBuffer)
                 );
             }

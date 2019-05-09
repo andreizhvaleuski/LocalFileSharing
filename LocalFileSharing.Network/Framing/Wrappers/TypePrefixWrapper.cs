@@ -1,10 +1,8 @@
 ﻿using System;
 
-using LocalFileSharing.Network.Framing;
-
 namespace LocalFileSharing.Network.Framing.Wrappers {
     public class TypePrefixWrapper : ITypePrefixWrapper {
-        public int TypePrefixSize => MessageTypeConverter.MessageTypeLength;
+        public int PrefixLength => MessageTypeConverter.MessageTypeLength;
 
         public byte[] Wrap(byte[] unwrappedBuffer, MessageType type) {
             if (unwrappedBuffer is null) {
@@ -26,20 +24,19 @@ namespace LocalFileSharing.Network.Framing.Wrappers {
             return wrappedBuffer;
         }
 
-        public MessageType GetTypePrefixValue(byte[] wrappedBuffer) {
+        public MessageType Unwrap(byte[] wrappedBuffer) {
             if (wrappedBuffer is null) {
                 throw new ArgumentNullException(nameof(wrappedBuffer));
             }
 
-            if (wrappedBuffer.Length < TypePrefixSize) {
+            if (wrappedBuffer.Length < PrefixLength) {
                 throw new ArgumentException(
-                    $"The {nameof(wrappedBuffer)} length cannot be less than {TypePrefixSize} bytes.",
+                    $"The {nameof(wrappedBuffer)} length cannot be less than {PrefixLength} bytes.",
                     nameof(wrappedBuffer)
                 );
             }
 
             MessageType type = MessageTypeConverter.GetMessageType(wrappedBuffer);
-
             return type;
         }
     }

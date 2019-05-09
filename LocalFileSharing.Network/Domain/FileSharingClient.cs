@@ -346,7 +346,7 @@ namespace LocalFileSharing.Network.Domain {
         }
 
         private int ReceiveLength() {
-            byte[] bufferLength = client.ReceiveBytes(_lengthPrefixWrapper.LengthPrefixSize);
+            byte[] bufferLength = client.ReceiveBytes(_lengthPrefixWrapper.PrefixLength);
             int length = BitConverter.ToInt32(bufferLength, 0);
             return length;
         }
@@ -360,11 +360,11 @@ namespace LocalFileSharing.Network.Domain {
                 throw new ArgumentNullException(nameof(buffer));
             }
 
-            byte[] typeBuffer = new byte[_typePrefixWrapper.TypePrefixSize];
+            byte[] typeBuffer = new byte[_typePrefixWrapper.PrefixLength];
             Array.Copy(buffer, 0, typeBuffer, 0, typeBuffer.Length);
-            type = _typePrefixWrapper.GetTypePrefixValue(typeBuffer);
-            byte[] contentBuffer = new byte[buffer.Length - _typePrefixWrapper.TypePrefixSize];
-            Array.Copy(buffer, _typePrefixWrapper.TypePrefixSize, contentBuffer,
+            type = _typePrefixWrapper.Unwrap(typeBuffer);
+            byte[] contentBuffer = new byte[buffer.Length - _typePrefixWrapper.PrefixLength];
+            Array.Copy(buffer, _typePrefixWrapper.PrefixLength, contentBuffer,
                 0, contentBuffer.Length);
             content = _contentConverter.GetContent(contentBuffer);
         }
