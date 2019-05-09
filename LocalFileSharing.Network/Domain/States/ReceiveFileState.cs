@@ -3,10 +3,9 @@
         Unspecified = 0,
         Initializing = 1,
         Receiving = 2,
-        Received = 3,
-        Hashing = 4,
-        Completed = 5,
-        Cancelled = 6,
-        Failed = 7
+        Hashing = 3,
+        Completed = 4,
+        Cancelled = 5,
+        Failed = 6
     }
 }
