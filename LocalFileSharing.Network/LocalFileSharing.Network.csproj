@@ -47,8 +47,9 @@
     <Compile Include="Domain\FileData.cs" />
     <Compile Include="Domain\FileSharingClient.cs" />
     <Compile Include="Domain\FileSharingServer.cs" />
-    <Compile Include="Domain\Progress\ReceiveFileProgressReport.cs" />
-    <Compile Include="Domain\Progress\SendFileProgressReport.cs" />
+    <Compile Include="Domain\Progress\FileTransferBaseEventArgs.cs" />
+    <Compile Include="Domain\Progress\ReceiveFileEventArgs.cs" />
+    <Compile Include="Domain\Progress\SendFileEventArgs.cs" />
     <Compile Include="Domain\States\ReceiveFileState.cs" />
     <Compile Include="Domain\States\SendFileState.cs" />
     <Compile Include="Framing\Content\ContentBase.cs" />

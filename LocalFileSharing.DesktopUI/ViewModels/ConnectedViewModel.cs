@@ -11,14 +11,14 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
         private long _download;
         private long _upload;
 
-        private readonly Progress<SendFileProgressReport> sendProgress;
-        private readonly Progress<ReceiveFileProgressReport> receiveProgress;
+        private readonly Progress<SendFileEventArgs> sendProgress;
+        private readonly Progress<ReceiveFileEventArgs> receiveProgress;
 
         public ConnectedViewModel() {
-            sendProgress = new Progress<SendFileProgressReport>();
+            sendProgress = new Progress<SendFileEventArgs>();
             sendProgress.ProgressChanged += UploadReport;
 
-            receiveProgress = new Progress<ReceiveFileProgressReport>();
+            receiveProgress = new Progress<ReceiveFileEventArgs>();
             receiveProgress.ProgressChanged += DownloadReport;
         }
 
@@ -88,17 +88,17 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
             await FileSharingClient.SendFileAsync(path, sendProgress, default);
         }
 
-        private void DownloadReport(object sender, ReceiveFileProgressReport e) {
-            Debug.WriteLine(e.ReceiveFileState);
-            if (e.ReceiveFileState != Network.Domain.States.ReceiveFileState.Receiving) {
+        private void DownloadReport(object sender, ReceiveFileEventArgs e) {
+            Debug.WriteLine(e.ReceiveState);
+            if (e.ReceiveState != Network.Domain.States.ReceiveFileState.Receiving) {
                 return;
             }
             Download = e.BytesRecived * 100 / e.FileData.FileSize;
         }
 
-        private void UploadReport(object sender, SendFileProgressReport e) {
-            Debug.WriteLine(e.SendFileState);
-            if (e.SendFileState != Network.Domain.States.SendFileState.Sending) {
+        private void UploadReport(object sender, SendFileEventArgs e) {
+            Debug.WriteLine(e.SendState);
+            if (e.SendState != Network.Domain.States.SendFileState.Sending) {
                 return;
             }
             Upload = e.BytesSent * 100 / e.FileData.FileSize;
