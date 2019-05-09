@@ -5,10 +5,10 @@ using LocalFileSharing.Network.Framing.Wrappers;
 
 namespace LocalFileSharing.Network.Framing {
     public class MessageFramer : IMessageFramer {
-        protected readonly ILengthPrefixWrapper _lengthPrefixWrapper;
-        protected readonly ITransferIDPrefixWrapper _transferIDPrefixWrapper;
-        protected readonly ITypePrefixWrapper _typePrefixWrapper;
-        protected readonly IContentConverter _contentConverter;
+        public ILengthPrefixWrapper LengthPrefixWrapper { get; protected set; }
+        public ITransferIDPrefixWrapper TransferIDPrefixWrapper { get; protected set; }
+        public ITypePrefixWrapper TypePrefixWrapper { get; protected set; }
+        public IContentConverter ContentConverter { get; protected set; }
 
         public MessageFramer(
             ILengthPrefixWrapper lengthPrefixWrapper,
@@ -32,10 +32,10 @@ namespace LocalFileSharing.Network.Framing {
                 throw new ArgumentNullException(nameof(contentConverter));
             }
 
-            _lengthPrefixWrapper = lengthPrefixWrapper;
-            _transferIDPrefixWrapper = transferIDPrefixWrapper;
-            _typePrefixWrapper = typePrefixWrapper;
-            _contentConverter = contentConverter;
+            LengthPrefixWrapper = lengthPrefixWrapper;
+            TransferIDPrefixWrapper = transferIDPrefixWrapper;
+            TypePrefixWrapper = typePrefixWrapper;
+            ContentConverter = contentConverter;
         }
 
         public byte[] Frame(Guid transferID, MessageType messageType, ContentBase content) {
@@ -57,10 +57,10 @@ namespace LocalFileSharing.Network.Framing {
                 throw new ArgumentNullException(nameof(content));
             }
 
-            byte[] wrappedBuffer = _contentConverter.GetBytes(content);
-            wrappedBuffer = _typePrefixWrapper.Wrap(wrappedBuffer, messageType);
-            wrappedBuffer = _transferIDPrefixWrapper.Wrap(wrappedBuffer, transferID);
-            wrappedBuffer = _lengthPrefixWrapper.Wrap(wrappedBuffer);
+            byte[] wrappedBuffer = ContentConverter.GetBytes(content);
+            wrappedBuffer = TypePrefixWrapper.Wrap(wrappedBuffer, messageType);
+            wrappedBuffer = TransferIDPrefixWrapper.Wrap(wrappedBuffer, transferID);
+            wrappedBuffer = LengthPrefixWrapper.Wrap(wrappedBuffer);
 
             return wrappedBuffer;
         }
@@ -82,30 +82,30 @@ namespace LocalFileSharing.Network.Framing {
                 );
             }
 
-            byte[] transferIDBuffer = new byte[_transferIDPrefixWrapper.PrefixLength];
-            Array.Copy(buffer, transferIDBuffer, _transferIDPrefixWrapper.PrefixLength);
-            transferID = _transferIDPrefixWrapper.Unwrap(transferIDBuffer);
+            byte[] transferIDBuffer = new byte[TransferIDPrefixWrapper.PrefixLength];
+            Array.Copy(buffer, transferIDBuffer, TransferIDPrefixWrapper.PrefixLength);
+            transferID = TransferIDPrefixWrapper.Unwrap(transferIDBuffer);
 
-            byte[] messageTypeBuffer = new byte[_typePrefixWrapper.PrefixLength];
+            byte[] messageTypeBuffer = new byte[TypePrefixWrapper.PrefixLength];
             Array.Copy(
                 buffer,
-                _transferIDPrefixWrapper.PrefixLength,
+                TransferIDPrefixWrapper.PrefixLength,
                 messageTypeBuffer,
                 0,
-                _typePrefixWrapper.PrefixLength
+                TypePrefixWrapper.PrefixLength
             );
-            messageType = _typePrefixWrapper.Unwrap(messageTypeBuffer);
+            messageType = TypePrefixWrapper.Unwrap(messageTypeBuffer);
 
             int contentBufferLength = buffer.Length - transferIDBuffer.Length - messageTypeBuffer.Length;
             byte[] contentBuffer = new byte[contentBufferLength];
             Array.Copy(
                 buffer,
-                _transferIDPrefixWrapper.PrefixLength + _typePrefixWrapper.PrefixLength,
+                TransferIDPrefixWrapper.PrefixLength + TypePrefixWrapper.PrefixLength,
                 contentBuffer,
                 0,
                 contentBufferLength
             );
-            content = _contentConverter.GetContent(contentBuffer);
+            content = ContentConverter.GetContent(contentBuffer);
         }
     }
 }
