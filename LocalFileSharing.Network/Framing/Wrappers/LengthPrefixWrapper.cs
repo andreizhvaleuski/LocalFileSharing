@@ -2,7 +2,11 @@
 
 namespace LocalFileSharing.Network.Framing.Wrappers {
     public class LengthPrefixWrapper : ILengthPrefixWrapper {
-        public int PrefixLength => sizeof(int);
+        public int PrefixLength { get; protected set; }
+
+        public LengthPrefixWrapper() {
+            PrefixLength = sizeof(int);
+        }
 
         public byte[] Wrap(byte[] unwrappedBuffer) {
             if (unwrappedBuffer is null) {
