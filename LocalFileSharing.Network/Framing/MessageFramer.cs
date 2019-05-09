@@ -53,11 +53,10 @@ namespace LocalFileSharing.Network.Framing {
                 );
             }
 
-            if (content == null) {
-                throw new ArgumentNullException(nameof(content));
+            byte[] wrappedBuffer = new byte[0];
+            if (content is null) {
+                wrappedBuffer = ContentConverter.GetBytes(content);
             }
-
-            byte[] wrappedBuffer = ContentConverter.GetBytes(content);
             wrappedBuffer = TypePrefixWrapper.Wrap(wrappedBuffer, messageType);
             wrappedBuffer = TransferIDPrefixWrapper.Wrap(wrappedBuffer, transferID);
             wrappedBuffer = LengthPrefixWrapper.Wrap(wrappedBuffer);
@@ -97,6 +96,10 @@ namespace LocalFileSharing.Network.Framing {
             messageType = TypePrefixWrapper.Unwrap(messageTypeBuffer);
 
             int contentBufferLength = buffer.Length - transferIDBuffer.Length - messageTypeBuffer.Length;
+            if (contentBufferLength == 0) {
+                content = null;
+                return;
+            }
             byte[] contentBuffer = new byte[contentBufferLength];
             Array.Copy(
                 buffer,
