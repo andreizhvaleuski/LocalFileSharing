@@ -2,7 +2,11 @@
 
 namespace LocalFileSharing.Network.Framing.Wrappers {
     public class TypePrefixWrapper : ITypePrefixWrapper {
-        public int PrefixLength => MessageTypeConverter.MessageTypeLength;
+        public int PrefixLength { get; protected set; }
+
+        public TypePrefixWrapper() {
+            PrefixLength = MessageTypeConverter.MessageTypeLength;
+        }
 
         public byte[] Wrap(byte[] unwrappedBuffer, MessageType type) {
             if (unwrappedBuffer is null) {
