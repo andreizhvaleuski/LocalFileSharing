@@ -5,6 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LocalFileSharing.Network.Framing {
-    public interface IMessageFramer {
+    public class MessageFramer : IMessageFramer {
     }
 }
