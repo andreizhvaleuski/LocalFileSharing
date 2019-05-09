@@ -2,7 +2,7 @@
 
 namespace LocalFileSharing.Network.Framing.Content {
     [Serializable]
-    public class FileInitialContent : ContentBase {
+    public class FileInitialContent : FileContentBase {
         public string FileName { get; protected set; }
 
         public long FileSize { get; protected set; }
@@ -10,11 +10,10 @@ namespace LocalFileSharing.Network.Framing.Content {
         public byte[] FileHash { get; protected set; }
 
         public FileInitialContent(
-            Guid opeartionID,
             string fileName,
             long fileSize,
             byte[] fileHash
-        ) : base(opeartionID) {
+        ) {
             if (string.IsNullOrWhiteSpace(fileName)) {
                 throw new ArgumentException(
                     $"The file name can not be null or whitespace.",
@@ -44,8 +43,5 @@ namespace LocalFileSharing.Network.Framing.Content {
             FileSize = fileSize;
             FileHash = fileHash;
         }
-
-        public FileInitialContent(string fileName, long fileSize, byte[] fileHash)
-            : this(Guid.NewGuid(), fileName, fileSize, fileHash) { }
     }
 }

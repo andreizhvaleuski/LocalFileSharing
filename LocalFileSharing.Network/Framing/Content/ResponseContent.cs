@@ -5,15 +5,13 @@ namespace LocalFileSharing.Network.Framing.Content {
     public class ResponseContent : ContentBase {
         public ResponseType ResponseType { get; protected set; }
 
-        public ResponseContent(Guid operationID, ResponseType responseType)
-            : base(operationID) {
+        public ResponseContent(ResponseType responseType) {
             if (responseType == ResponseType.Unspecified) {
                 throw new ArgumentException(
                     $"Response type can not be unspecified.",
                     nameof(responseType)
                 );
             }
-
             ResponseType = responseType;
         }
     }
