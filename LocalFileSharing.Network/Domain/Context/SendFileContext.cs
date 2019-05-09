@@ -9,8 +9,7 @@ namespace LocalFileSharing.Network.Domain.Context {
 
         public BinaryReader Reader { get; protected set; }
 
-        public SendFileContext(Guid transferID, SendFileState state, BinaryReader reader)
-            : base(transferID) {
+        public SendFileContext(SendFileState state, BinaryReader reader) {
             if (state == SendFileState.Unspecified) {
                 throw new ArgumentException(
                     $"The state value can not be unspecified.",

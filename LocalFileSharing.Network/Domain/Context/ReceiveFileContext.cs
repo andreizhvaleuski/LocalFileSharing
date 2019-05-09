@@ -9,8 +9,7 @@ namespace LocalFileSharing.Network.Domain.Context {
 
         public BinaryWriter Writer { get; protected set; }
 
-        public ReceiveFileContext(Guid transferID, ReceiveFileState state, BinaryWriter writer)
-            : base(transferID) {
+        public ReceiveFileContext(ReceiveFileState state, BinaryWriter writer) {
             if (state == ReceiveFileState.Unspecified) {
                 throw new ArgumentException(
                     $"The state value can not be unspecified.",
