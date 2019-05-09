@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 
 using LocalFileSharing.Network.Sockets;
@@ -13,9 +12,7 @@ namespace LocalFileSharing.Network.Domain {
 
         private TcpServer _tcpServer;
 
-        public async Task<IPEndPoint> GetServerIPEndPointAsync(
-            CancellationToken cancellationToken
-        ) {
+        public async Task<IPEndPoint> GetServerIPEndPointAsync() {
             IPEndPoint ipEndPoint = null;
 
             await Task.Run(() => {
@@ -32,9 +29,7 @@ namespace LocalFileSharing.Network.Domain {
             return ipEndPoint;
         }
 
-        public async Task<FileSharingClient> ListenAsync(
-            IPEndPoint ipEndPoint
-        ) {
+        public async Task<FileSharingClient> ListenAsync(IPEndPoint ipEndPoint) {
             if (ipEndPoint is null) {
                 throw new ArgumentNullException(nameof(ipEndPoint));
             }
@@ -46,8 +41,7 @@ namespace LocalFileSharing.Network.Domain {
             }
 
             if (_tcpServer is null) {
-                _tcpServer = new TcpServer(ipEndPoint.Address, ipEndPoint.Port);
-                _tcpServer.StartListening(1);
+                _tcpServer = new TcpServer(ipEndPoint);
             }
 
             await Task.Run(() => {
@@ -58,8 +52,8 @@ namespace LocalFileSharing.Network.Domain {
             return FileSharingClient;
         }
 
-        public void Close() {
-            _tcpServer.StopListening();
+        public void Disconnect() {
+            _tcpServer.Disconnect();
         }
     }
 }
