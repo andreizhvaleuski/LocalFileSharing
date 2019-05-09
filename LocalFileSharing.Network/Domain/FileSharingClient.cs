@@ -31,8 +31,8 @@ namespace LocalFileSharing.Network.Domain {
 
         private readonly TcpClient client;
 
-        public FileSharingClient(IPAddress ipAddress, int port)
-            : this(new TcpClient(ipAddress, port)) { }
+        public FileSharingClient(IPEndPoint ipEndPoint)
+            : this(new TcpClient(ipEndPoint)) { }
 
         public FileSharingClient(TcpClient client) {
             if (client is null) {
@@ -48,6 +48,9 @@ namespace LocalFileSharing.Network.Domain {
 
             _sendFileContexts = new ConcurrentDictionary<Guid, SendFileContext>();
             _receiveFileContexts = new ConcurrentDictionary<Guid, ReceiveFileContext>();
+
+            _sendMessages = new ConcurrentQueue<byte[]>();
+            _receiveMessages = new ConcurrentQueue<byte[]>();
         }
 
         public async Task SendFileAsync(
