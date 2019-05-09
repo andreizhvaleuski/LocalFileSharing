@@ -3,11 +3,12 @@
 namespace LocalFileSharing.Network.Domain.Context {
     public abstract class FileTransferContextBase
         : IComparable<FileTransferContextBase>, IEquatable<FileTransferContextBase> {
-        public Guid TransferID { get; protected set; }
-
         private bool _isCancelled;
+        private bool _isFailed;
 
+        public Guid TransferID { get; protected set; }
         public bool Cancelled => _isCancelled;
+        public bool Failed => _isFailed;
 
         public FileTransferContextBase(Guid transferID) {
             if (transferID == Guid.Empty) {
