@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using LocalFileSharing.Network.Framing.Content;
 
 namespace LocalFileSharing.Network.Framing {
     public interface IMessageFramer {
+        byte[] Frame(Guid transferID, MessageType messageType, ContentBase content);
+
+        void GetFrameComponents(byte[] buffer, out Guid transferID, out MessageType messageType, out ContentBase content);
     }
 }
