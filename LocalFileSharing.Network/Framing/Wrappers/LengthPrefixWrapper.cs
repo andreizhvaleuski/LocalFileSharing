@@ -27,9 +27,9 @@ namespace LocalFileSharing.Network.Framing.Wrappers {
                 throw new ArgumentNullException(nameof(wrappedBuffer));
             }
 
-            if (wrappedBuffer.Length < PrefixLength) {
+            if (wrappedBuffer.Length != PrefixLength) {
                 throw new ArgumentException(
-                    $"The {nameof(wrappedBuffer)} length cannot be less than {PrefixLength} bytes.",
+                    $"The buffer length have to be {PrefixLength} bytes long.",
                     nameof(wrappedBuffer)
                 );
             }
