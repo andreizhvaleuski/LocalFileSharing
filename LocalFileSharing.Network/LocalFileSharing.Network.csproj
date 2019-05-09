@@ -61,6 +61,7 @@
     <Compile Include="Framing\ContentConverter.cs" />
     <Compile Include="Framing\IContentConverter.cs" />
     <Compile Include="Framing\IFileHashCalculator.cs" />
+    <Compile Include="Framing\IMessageFramer.cs" />
     <Compile Include="Framing\MessageTypeConverter.cs" />
     <Compile Include="Framing\MessageType.cs" />
     <Compile Include="Framing\ResponseType.cs" />
