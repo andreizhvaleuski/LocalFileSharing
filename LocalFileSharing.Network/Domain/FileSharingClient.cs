@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -23,8 +23,8 @@ namespace LocalFileSharing.Network.Domain {
         private readonly IFileHashCalculator _fileHashCalculator;
         private readonly IContentConverter _contentConverter;
 
-        private readonly SortedSet<SendFileContext> _sendFileContexts;
-        private readonly SortedSet<ReceiveFileContext> _receiveFileContexts;
+        private readonly ConcurrentDictionary<Guid, SendFileContext> _sendFileContexts;
+        private readonly ConcurrentDictionary<Guid, ReceiveFileContext> _receiveFileContexts;
 
         private readonly TcpClient client;
 
@@ -43,8 +43,8 @@ namespace LocalFileSharing.Network.Domain {
             _fileHashCalculator = new SHA256FileHashCalculator();
             _contentConverter = new ContentConverter();
 
-            _sendFileContexts = new SortedSet<SendFileContext>();
-            _receiveFileContexts = new SortedSet<ReceiveFileContext>();
+            _sendFileContexts = new ConcurrentDictionary<Guid, SendFileContext>();
+            _receiveFileContexts = new ConcurrentDictionary<Guid, ReceiveFileContext>();
         }
 
         public async Task SendFileAsync(

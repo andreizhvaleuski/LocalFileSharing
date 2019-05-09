@@ -4,39 +4,40 @@ using System.Net.Sockets;
 
 namespace LocalFileSharing.Network.Sockets {
     public class TcpClient : TcpSocketBase {
-        protected readonly Socket client;
-
-        public TcpClient(IPAddress ipAddress, int port) {
-            if (ipAddress is null) {
-                throw new ArgumentNullException(nameof(ipAddress));
+        public TcpClient(IPEndPoint ipEndPoint) {
+            if (ipEndPoint is null) {
+                throw new ArgumentNullException(nameof(ipEndPoint));
             }
 
-            if (!(port >= MinAllowedPort && port <= MaxAllowedPort)) {
+            if (!(ipEndPoint.Port >= MinAllowedPort && ipEndPoint.Port <= MaxAllowedPort)) {
                 throw new ArgumentOutOfRangeException(
-                    nameof(port),
-                    port,
-                    $"The port have to be between {MinAllowedPort} and {MaxAllowedPort}."
+                    nameof(ipEndPoint.Port),
+                    ipEndPoint.Port,
+                    $"The ip end point port have to be between {MinAllowedPort} and {MaxAllowedPort}."
                 );
             }
 
-            client = new Socket(
+            _socket = new Socket(
                 AddressFamily.InterNetwork,
                 SocketType.Stream,
                 ProtocolType.Tcp
             );
-            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, port);
-            client.Connect(ipEndPoint);
+            _socket.Connect(ipEndPoint);
         }
 
         public TcpClient(Socket connectedClient) {
+            if (connectedClient is null) {
+                throw new ArgumentNullException(nameof(connectedClient));
+            }
+
             if (!connectedClient.Connected) {
                 throw new ArgumentException(
-                    $"The client is not connected.",
+                    $"The client have to be connected.",
                     nameof(connectedClient)
                 );
             }
 
-            client = connectedClient;
+            _socket = connectedClient;
         }
 
         public virtual void SendBytes(byte[] buffer) {
@@ -46,12 +47,12 @@ namespace LocalFileSharing.Network.Sockets {
 
             if (buffer.Length == 0) {
                 throw new ArgumentException(
-                    $"The buffer cannot be empty.",
+                    $"The buffer can not be empty.",
                     nameof(buffer)
                 );
             }
 
-            client.Send(buffer);
+            _socket.Send(buffer);
         }
 
         public virtual byte[] ReceiveBytes(int bytesNumber) {
@@ -65,7 +66,7 @@ namespace LocalFileSharing.Network.Sockets {
             byte[] buffer = new byte[bytesNumber];
             int totalBytesReceivedNumber = 0;
             do {
-                int currentBytesReceivedNumber = client.Receive(
+                int currentBytesReceivedNumber = _socket.Receive(
                     buffer,
                     totalBytesReceivedNumber,
                     bytesNumber - totalBytesReceivedNumber,
@@ -73,7 +74,7 @@ namespace LocalFileSharing.Network.Sockets {
                 );
 
                 if (currentBytesReceivedNumber <= 0) {
-                    return null;
+                    throw new SocketException();
                 }
 
                 totalBytesReceivedNumber += currentBytesReceivedNumber;
@@ -82,9 +83,13 @@ namespace LocalFileSharing.Network.Sockets {
             return buffer;
         }
 
+        public override void Disconnect() {
+            _socket.Shutdown(SocketShutdown.Both);
+            _socket.Close();
+        }
+
         public virtual void Close() {
-            client.Shutdown(SocketShutdown.Both);
-            client.Close();
+            _socket.Close();
         }
     }
 }

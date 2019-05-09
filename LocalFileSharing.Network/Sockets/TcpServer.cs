@@ -4,46 +4,42 @@ using System.Net.Sockets;
 
 namespace LocalFileSharing.Network.Sockets {
     public class TcpServer : TcpSocketBase {
-        protected readonly Socket listener;
+        protected int _backlog = 1;
 
-        protected TcpClient connectedClient;
+        public TcpClient ConnectedClient { get; protected set; }
 
-        public TcpServer(IPAddress ipAddress, int port) {
-            if (ipAddress is null) {
-                throw new ArgumentNullException(nameof(ipAddress));
+        public TcpServer(IPEndPoint ipEndPoint) {
+            if (ipEndPoint is null) {
+                throw new ArgumentNullException(nameof(ipEndPoint));
             }
 
-            if (!(port >= MinAllowedPort && port <= MaxAllowedPort)) {
+            if (!(ipEndPoint.Port >= MinAllowedPort && ipEndPoint.Port <= MaxAllowedPort)) {
                 throw new ArgumentOutOfRangeException(
-                    nameof(port),
-                    port,
+                    nameof(ipEndPoint.Port),
+                    ipEndPoint.Port,
                     $"The port have to be between {MinAllowedPort} and {MaxAllowedPort}."
                 );
             }
 
-            listener = new Socket(
+            _socket = new Socket(
                 AddressFamily.InterNetwork,
                 SocketType.Stream,
                 ProtocolType.Tcp
             );
-            IPEndPoint ipEndPoint = new IPEndPoint(ipAddress, port);
-            listener.Bind(ipEndPoint);
-        }
-
-        public void StartListening(int backlog) {
-            listener.Listen(backlog);
+            _socket.Bind(ipEndPoint);
+            _socket.Listen(_backlog);
         }
 
         public TcpClient AcceptTcpClient() {
-            Socket acceptedClient = listener.Accept();
-            connectedClient = new TcpClient(acceptedClient);
-
-            return connectedClient;
+            Socket connectedClient = _socket.Accept();
+            ConnectedClient = new TcpClient(connectedClient);
+            return ConnectedClient;
         }
 
-        public void StopListening() {
-            connectedClient?.Close();
-            listener.Close();
+        public override void Disconnect() {
+            _socket.Shutdown(SocketShutdown.Both);
+            _socket.Close();
+            ConnectedClient.Close();
         }
     }
 }
