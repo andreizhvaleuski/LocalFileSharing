@@ -1,19 +1,18 @@
-﻿using System;
-
-namespace LocalFileSharing.Network.Domain.Context {
+﻿namespace LocalFileSharing.Network.Domain.Context {
     public abstract class FileTransferContextBase {
-        private bool _isCancelled;
-        private bool _isFailed;
+        public string FilePath { get; set; }
+        public long FileSize { get; set; }
+        public byte[] FileHash { get; set; }
+        public bool Initialized { get; protected set; }
+        public bool Cancelled { get; protected set; }
 
-        public bool Cancelled => _isCancelled;
-        public bool Failed => _isFailed;
-        public string FilePath { get; protected set; }
+        public virtual void Initialize() {
+
+            Initialized = true;
+        }
 
         public virtual void Cancel() {
-            if (Cancelled) {
-                throw new InvalidOperationException();
-            }
-            _isCancelled = true;
+            Cancelled = true;
         }
     }
 }
