@@ -2,12 +2,11 @@
     public enum ReceiveFileState {
         Unspecified = 0,
         Initializing = 1,
-        Sending = 2,
-        Ending = 3,
-        Cancelled = 4,
-        Hashing = 5,
-        HashChecked = 6,
-        Failed = 7,
-        Completed = 8
+        Receiving = 2,
+        Received = 3,
+        Hashing = 4,
+        Completed = 5,
+        Cancelled = 6,
+        Failed = 7
     }
 }

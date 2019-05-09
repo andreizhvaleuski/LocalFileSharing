@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
+using LocalFileSharing.Network.Domain.Context;
 using LocalFileSharing.Network.Domain.Progress;
 using LocalFileSharing.Network.Domain.States;
 using LocalFileSharing.Network.Framing;
@@ -20,6 +22,9 @@ namespace LocalFileSharing.Network.Domain {
         private readonly ITypePrefixWrapper _typePrefixWrapper;
         private readonly IFileHashCalculator _fileHashCalculator;
         private readonly IContentConverter _contentConverter;
+
+        private readonly SortedSet<SendFileContext> _sendFileContexts;
+        private readonly SortedSet<ReceiveFileContext> _receiveFileContexts;
 
         private readonly TcpClient client;
 
@@ -37,6 +42,9 @@ namespace LocalFileSharing.Network.Domain {
             _typePrefixWrapper = new TypePrefixWrapper();
             _fileHashCalculator = new SHA256FileHashCalculator();
             _contentConverter = new ContentConverter();
+
+            _sendFileContexts = new SortedSet<SendFileContext>();
+            _receiveFileContexts = new SortedSet<ReceiveFileContext>();
         }
 
         public async Task SendFileAsync(
@@ -278,7 +286,7 @@ namespace LocalFileSharing.Network.Domain {
                         stream.Write(regularContent.FileBlock, 0, regularContent.FileBlock.Length);
                         bytesReceived += regularContent.FileBlock.Length;
 
-                        ReportReceiveProgress(progress, fileData, bytesReceived, ReceiveFileState.Sending);
+                        ReportReceiveProgress(progress, fileData, bytesReceived, ReceiveFileState.Receiving);
 
                         SendResponse(fileData.OperationID, ResponseType.ReceiveFileRegular);
                     }
@@ -286,7 +294,7 @@ namespace LocalFileSharing.Network.Domain {
                         //SendFileEndContent initialContent = (SendFileEndContent)content;
                         received = true;
 
-                        ReportReceiveProgress(progress, fileData, 0, ReceiveFileState.Ending);
+                        ReportReceiveProgress(progress, fileData, 0, ReceiveFileState.Received);
 
                         SendResponse(fileData.OperationID, ResponseType.ReceiveFileEnd);
                         break;

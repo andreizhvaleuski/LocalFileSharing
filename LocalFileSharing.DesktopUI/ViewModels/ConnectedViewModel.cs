@@ -90,7 +90,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
 
         private void DownloadReport(object sender, ReceiveFileProgressReport e) {
             Debug.WriteLine(e.ReceiveFileState);
-            if (e.ReceiveFileState != Network.Domain.States.ReceiveFileState.Sending) {
+            if (e.ReceiveFileState != Network.Domain.States.ReceiveFileState.Receiving) {
                 return;
             }
             Download = e.BytesRecived * 100 / e.FileData.FileSize;

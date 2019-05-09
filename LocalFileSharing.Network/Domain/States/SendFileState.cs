@@ -5,6 +5,7 @@
         Initializing = 2,
         Sending = 3,
         Sent = 4,
+        Completed = 5,
         Cancelled = 6,
         Failed = 7
     }
