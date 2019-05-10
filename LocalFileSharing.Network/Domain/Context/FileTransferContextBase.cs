@@ -11,7 +11,10 @@
             Initialized = true;
         }
 
+        public abstract void End();
+
         public virtual void Cancel() {
+            End();
             Cancelled = true;
         }
     }
