@@ -54,7 +54,7 @@ namespace LocalFileSharing.Network.Framing {
             }
 
             byte[] wrappedBuffer = new byte[0];
-            if (content is null) {
+            if (content != null) {
                 wrappedBuffer = ContentConverter.GetBytes(content);
             }
             wrappedBuffer = TypePrefixWrapper.Wrap(wrappedBuffer, messageType);

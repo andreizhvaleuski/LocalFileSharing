@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -7,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using LocalFileSharing.Network.Domain.Context;
+using LocalFileSharing.Network.Domain.Progress;
 using LocalFileSharing.Network.Domain.States;
 using LocalFileSharing.Network.Framing;
 using LocalFileSharing.Network.Framing.Content;
@@ -16,6 +18,11 @@ using LocalFileSharing.Network.Sockets;
 namespace LocalFileSharing.Network.Domain {
     public sealed class FileSharingClient {
         public const int FileBlockSize = 1024 * 1024 * 2;
+
+        public event EventHandler<SendFileEventArgs> FileSend;
+        public event EventHandler<ReceiveFileEventArgs> FileReceive;
+
+        public string DownloadPath { get; private set; }
 
         private readonly IMessageFramer _messageFramer;
         private readonly IFileHashCalculator _fileHashCalculator;
@@ -29,11 +36,6 @@ namespace LocalFileSharing.Network.Domain {
         private readonly TcpClient _client;
 
         private readonly CancellationTokenSource _connectionCancellationTokenSource;
-
-        public event EventHandler FileSend;
-        public event EventHandler FileReceive;
-
-        public string DownloadPath { get; private set; }
 
         public FileSharingClient(IPEndPoint ipEndPoint)
             : this(new TcpClient(ipEndPoint)) { }
@@ -61,7 +63,7 @@ namespace LocalFileSharing.Network.Domain {
 
             _connectionCancellationTokenSource = new CancellationTokenSource();
 
-            DownloadPath = @"D:\Downloads";
+            SetDownloadDirectory(@"D:\Downloads");
 
             Initialize(_connectionCancellationTokenSource.Token);
         }
@@ -70,6 +72,17 @@ namespace LocalFileSharing.Network.Domain {
             StartSendAsync(cancellationToken);
             StartReceiveAsync(cancellationToken);
             StartProcessReceivedMessagesAsync(cancellationToken);
+        }
+
+        private async void StartReceiveAsync(CancellationToken cancellationToken) {
+            await Task.Run(() => StartReceive(cancellationToken));
+        }
+
+        private void StartReceive(CancellationToken cancellationToken) {
+            while (!cancellationToken.IsCancellationRequested) {
+                byte[] messageBuffer = ReceiveMessage();
+                _receivedMessages.Enqueue(messageBuffer);
+            }
         }
 
         private async void StartProcessReceivedMessagesAsync(CancellationToken cancellationToken) {
@@ -82,156 +95,226 @@ namespace LocalFileSharing.Network.Domain {
                 if (!result) {
                     continue;
                 }
+
                 _messageFramer.GetFrameComponents(
                     messageBuffer,
                     out Guid transferID,
                     out MessageType messageType,
                     out ContentBase content
                 );
-
                 ProcessReceivedMessage(transferID, messageType, content);
             }
         }
 
-        private void ProcessReceivedMessage(
-            Guid transferID,
-            MessageType messageType,
-            ContentBase content
-        ) {
+        private void ProcessReceivedMessage(Guid transferID, MessageType messageType, ContentBase content) {
+            if (transferID == Guid.Empty) {
+                throw new ArgumentException(
+                    $"The transfer id can not be empty.",
+                    nameof(transferID)
+                );
+            }
+
+            if (messageType == MessageType.Unspecified) {
+                throw new ArgumentException(
+                    $"The message type can not be with {MessageType.Unspecified} value.",
+                    nameof(transferID)
+                );
+            }
+
             if (messageType == MessageType.SendFileInitial) {
                 FileInitialContent initialContent = content as FileInitialContent;
                 if (initialContent is null) {
-                    throw new ArgumentException();
+                    throw new InvalidOperationException();
                 }
 
-                ReceiveFileContext context = new ReceiveFileContext() {
-                    FilePath = Path.Combine(DownloadPath, initialContent.FileName),
-                    ReceiveState = ReceiveFileState.Initializing
-                };
-                context.Writer = new BinaryWriter(File.Create(context.FilePath));
-                bool result = _receiveFileContexts.TryAdd(transferID, context);
-                if (result) {
-                    // TO DO:
-                    // Add transferID to ignored.
-                    return;
-                }
-
-                byte[] responseBuffer = _messageFramer.Frame(
-                    transferID,
-                    MessageType.Response,
-                    new ResponseContent(ResponseType.ReceiveFileInitial)
-                );
-                _messagesToSend.Enqueue(responseBuffer);
+                ProcessSendFileInitialMessage(transferID, initialContent);
             }
             else if (messageType == MessageType.SendFileRegular) {
                 FileRegularContent regularContent = content as FileRegularContent;
                 if (regularContent is null) {
-                    throw new ArgumentException();
+                    throw new InvalidOperationException();
                 }
 
-                bool result = _receiveFileContexts.TryGetValue(
-                    transferID,
-                    out ReceiveFileContext context
-                );
-                if (!result) {
-                    // TODO;
-
-                    return;
-                }
-                context.Writer.Write(regularContent.FileBlock);
-
-                AddResponseToSendQueue(transferID, ResponseType.ReceiveFileRegular);
+                ProcessSendFileRegularMessage(transferID, regularContent);
             }
             else if (messageType == MessageType.SendFileEnd) {
-                bool result = _receiveFileContexts.TryGetValue(
-                    transferID,
-                    out ReceiveFileContext context
-                );
-                if (!result) {
-                    // TODO;
-
-                    return;
-                }
-                context.Writer.Close();
-
-                byte[] hash = _fileHashCalculator.Calculate(context.FilePath);
-                if (!hash.SequenceEqual(context.FileHash)) {
-                    context.ReceiveState = ReceiveFileState.Failed;
-                }
-
-                _receiveFileContexts.TryRemove(transferID, out _);
-
-                AddResponseToSendQueue(transferID, ResponseType.ReceiveFileEnd);
+                ProcessSendFileEndMessage(transferID);
             }
             else if (messageType == MessageType.SendFileCancel) {
-                bool result = _receiveFileContexts.TryGetValue(
-                    transferID,
-                    out ReceiveFileContext context
-                );
-                if (!result) {
-                    // TODO;
-
-                    return;
-                }
-                context.Writer.Close();
-
-                _receiveFileContexts.TryRemove(transferID, out _);
-
-                AddResponseToSendQueue(transferID, ResponseType.ReceiveFileCancel);
+                ProcessSendFileCancelMessage(transferID);
             }
             else if (messageType == MessageType.Response) {
                 ResponseContent responseContent = content as ResponseContent;
                 if (responseContent is null) {
-                    throw new ArgumentException();
+                    throw new InvalidOperationException();
                 }
 
                 ProcessResponseMessage(transferID, responseContent.ResponseType);
             }
         }
 
-        private void ProcessResponseMessage(
-            Guid transferID,
-            ResponseType responseType
-        ) {
-            bool result = _sendFileContexts.TryGetValue(
+        private void ProcessSendFileInitialMessage(Guid transferID, FileInitialContent content) {
+            ReceiveFileContext context = new ReceiveFileContext() {
+                FilePath = Path.Combine(DownloadPath, content.FileName),
+                FileSize = content.FileSize,
+                FileHash = content.FileHash
+            };
+            bool result = _receiveFileContexts.TryAdd(transferID, context);
+            if (result) {
+                return;
+            }
+
+            ReceiveFileEventArgs recvFileEventArgs = new ReceiveFileEventArgs(
                 transferID,
-                out SendFileContext context
+                context.FilePath,
+                context.FileSize,
+                ReceiveFileState.Initializing,
+                context.BytesReceived
+            );
+            OnFileReceive(recvFileEventArgs);
+
+            DebugInfo(transferID, context);
+        }
+
+        private void ProcessSendFileRegularMessage(Guid transferID, FileRegularContent content) {
+            bool result = _receiveFileContexts.TryGetValue(
+                transferID,
+                out ReceiveFileContext recvContext
             );
             if (!result) {
-                // TODO:
+                return;
             }
 
+            if (recvContext.Cancelled) {
+                AddResponseToSendQueue(transferID, ResponseType.ReceiveFileCancel);
+                _receiveFileContexts.TryRemove(transferID, out _);
+                return;
+            }
+
+            recvContext.Writer.Write(content.FileBlock);
+            recvContext.BytesReceived += content.FileBlock.LongLength;
+
+            ReceiveFileEventArgs recvFileEventArgs = new ReceiveFileEventArgs(
+                transferID,
+                recvContext.FilePath,
+                recvContext.FileSize,
+                ReceiveFileState.Receiving,
+                recvContext.BytesReceived
+            );
+            OnFileReceive(recvFileEventArgs);
+
+            DebugInfo(transferID, recvContext);
+            AddResponseToSendQueue(transferID, ResponseType.ReceiveFileRegular);
+        }
+
+        private void ProcessSendFileEndMessage(Guid transferID) {
+            bool result = _receiveFileContexts.TryGetValue(
+                transferID,
+                out ReceiveFileContext context
+            );
+            if (!result) {
+                return;
+            }
+
+            context.End();
+            DebugInfo(transferID, context);
+
+            CheckHashAsync(transferID);
+        }
+
+        private void ProcessSendFileCancelMessage(Guid transferID) {
+            bool result = _receiveFileContexts.TryGetValue(
+                transferID,
+                out ReceiveFileContext context
+            );
+            if (!result) {
+                return;
+            }
+
+            context.Cancel();
+            DebugInfo(transferID, context);
+
+            ReceiveFileEventArgs recvFileEventArgs = new ReceiveFileEventArgs(
+                transferID,
+                context.FilePath,
+                context.FileSize,
+                ReceiveFileState.Cancelled,
+                context.BytesReceived
+            );
+            OnFileReceive(recvFileEventArgs);
+
+            _receiveFileContexts.TryRemove(transferID, out _);
+        }
+
+        private void ProcessResponseMessage(Guid transferID, ResponseType responseType) {
+            bool result = _sendFileContexts.TryGetValue(
+                transferID,
+                out SendFileContext sendContext
+            );
+            if (!result) {
+                return;
+            }
+
+            bool initialized = false;
             if (responseType == ResponseType.ReceiveFileInitial) {
-                context.Reader = new BinaryReader(File.OpenRead(context.FilePath));
-
-                byte[] fileBlock = context.Reader.ReadBytes(FileBlockSize);
-                FileRegularContent content = new FileRegularContent(fileBlock);
-                AddMessageToSendQueue(transferID, MessageType.SendFileRegular, content);
+                sendContext.Initialize();
             }
-            else if (responseType == ResponseType.ReceiveFileRegular) {
-                if (context.BytesSent == context.FileSize) {
+            else if (responseType == ResponseType.ReceiveFileRegular || initialized) {
+                if (sendContext.BytesSent == sendContext.FileSize) {
+                    SendFileEventArgs sendFileEventArgs = new SendFileEventArgs(
+                        transferID,
+                        sendContext.FilePath,
+                        sendContext.FileSize,
+                        SendFileState.Completed,
+                        sendContext.BytesSent
+                    );
+                    OnFileSend(sendFileEventArgs);
+
+                    DebugInfo(transferID, sendContext);
                     AddMessageToSendQueue(transferID, MessageType.SendFileEnd);
+
+                    _sendFileContexts.TryRemove(transferID, out _);
                 }
                 else {
-                    byte[] fileBlock = context.Reader.ReadBytes(FileBlockSize);
+                    byte[] fileBlock = sendContext.Reader.ReadBytes(FileBlockSize);
+                    sendContext.BytesSent += fileBlock.Length;
                     FileRegularContent content = new FileRegularContent(fileBlock);
+
+                    SendFileEventArgs sendFileEventArgs = new SendFileEventArgs(
+                        transferID,
+                        sendContext.FilePath,
+                        sendContext.FileSize,
+                        SendFileState.Sending,
+                        sendContext.BytesSent
+                    );
+                    OnFileSend(sendFileEventArgs);
+
+                    DebugInfo(transferID, sendContext);
                     AddMessageToSendQueue(transferID, MessageType.SendFileRegular, content);
                 }
             }
+            else if (responseType == ResponseType.ReceiveFileCancel) {
+                sendContext.Cancel();
+                DebugInfo(transferID, sendContext);
+
+                SendFileEventArgs sendFileEventArgs = new SendFileEventArgs(
+                    transferID,
+                    sendContext.FilePath,
+                    sendContext.FileSize,
+                    SendFileState.Cancelled,
+                    sendContext.BytesSent
+                );
+                OnFileSend(sendFileEventArgs);
+
+                _sendFileContexts.TryRemove(transferID, out _);
+            }
         }
 
-        private void AddMessageToSendQueue(
-            Guid transferID,
-            MessageType messageType
-        ) {
+        private void AddMessageToSendQueue(Guid transferID, MessageType messageType) {
             AddMessageToSendQueue(transferID, messageType, null);
         }
 
-        private void AddMessageToSendQueue(
-            Guid transferID,
-            MessageType messageType,
-            ContentBase content
-        ) {
+        private void AddMessageToSendQueue(Guid transferID, MessageType messageType, ContentBase content) {
             byte[] messageBuffer = _messageFramer.Frame(transferID, messageType, content);
             _messagesToSend.Enqueue(messageBuffer);
         }
@@ -246,11 +329,26 @@ namespace LocalFileSharing.Network.Domain {
         }
 
         public bool InitializeReceive(Guid transferID) {
-            bool result = _receiveFileContexts.TryGetValue(transferID, out ReceiveFileContext context);
+            bool result = _receiveFileContexts.TryGetValue(
+                transferID,
+                out ReceiveFileContext recvContext
+            );
             if (!result) {
                 return false;
             }
-            context.Initialize();
+
+            recvContext.Initialize();
+
+            ReceiveFileEventArgs recvFileEventArgs = new ReceiveFileEventArgs(
+                transferID,
+                recvContext.FilePath,
+                recvContext.FileSize,
+                ReceiveFileState.Receiving,
+                recvContext.BytesReceived
+            );
+            OnFileReceive(recvFileEventArgs);
+
+            DebugInfo(transferID, recvContext);
             AddResponseToSendQueue(transferID, ResponseType.ReceiveFileInitial);
             return true;
         }
@@ -260,6 +358,7 @@ namespace LocalFileSharing.Network.Domain {
             if (!result) {
                 return false;
             }
+            DebugInfo(transferID, context);
             context.Cancel();
             return true;
         }
@@ -269,6 +368,7 @@ namespace LocalFileSharing.Network.Domain {
             if (!result) {
                 return false;
             }
+            DebugInfo(transferID, context);
             context.Cancel();
             return true;
         }
@@ -287,17 +387,6 @@ namespace LocalFileSharing.Network.Domain {
             }
         }
 
-        private async void StartReceiveAsync(CancellationToken cancellationToken) {
-            await Task.Run(() => StartReceive(cancellationToken));
-        }
-
-        private void StartReceive(CancellationToken cancellationToken) {
-            while (!cancellationToken.IsCancellationRequested) {
-                byte[] messageBuffer = ReceiveMessage();
-                _receivedMessages.Enqueue(messageBuffer);
-            }
-        }
-
         private int ReceiveLength() {
             byte[] bufferLength =
                 _client.ReceiveBytes(((MessageFramer)_messageFramer).LengthPrefixWrapper.PrefixLength);
@@ -310,5 +399,107 @@ namespace LocalFileSharing.Network.Domain {
             byte[] messageBuffer = _client.ReceiveBytes(messageLength);
             return messageBuffer;
         }
+
+        public void SetDownloadDirectory(string path) {
+            if (!Directory.Exists(path)) {
+                Directory.CreateDirectory(path);
+            }
+            DownloadPath = path;
+        }
+
+        private void OnFileSend(SendFileEventArgs e) {
+            FileSend?.Invoke(this, e);
+        }
+
+        private void OnFileReceive(ReceiveFileEventArgs e) {
+            FileReceive?.Invoke(this, e);
+        }
+
+        private async void CheckHashAsync(Guid transferID) {
+            await Task.Run(() => {
+                bool result = _receiveFileContexts.TryGetValue(
+                    transferID,
+                    out ReceiveFileContext recvContext
+                );
+                if (!result) {
+                    return;
+                }
+
+                ReceiveFileEventArgs recvFileEventArgs = new ReceiveFileEventArgs(
+                    transferID,
+                    recvContext.FilePath,
+                    recvContext.FileSize,
+                    ReceiveFileState.Hashing,
+                    recvContext.BytesReceived
+                );
+                OnFileReceive(recvFileEventArgs);
+                byte[] hash = _fileHashCalculator.Calculate(recvContext.FilePath);
+                if (hash.SequenceEqual(recvContext.FileHash)) {
+                    recvFileEventArgs = new ReceiveFileEventArgs(
+                        transferID,
+                        recvContext.FilePath,
+                        recvContext.FileSize,
+                        ReceiveFileState.Completed,
+                        recvContext.BytesReceived
+                    );
+                    OnFileReceive(recvFileEventArgs);
+                }
+                else {
+                    recvFileEventArgs = new ReceiveFileEventArgs(
+                        transferID,
+                        recvContext.FilePath,
+                        recvContext.FileSize,
+                        ReceiveFileState.Failed,
+                        recvContext.BytesReceived
+                    );
+                    OnFileReceive(recvFileEventArgs);
+                }
+
+                _receiveFileContexts.TryRemove(transferID, out _);
+            });
+        }
+
+        public async Task SendFile(string path) {
+            await Task.Run(() => {
+                FileInfo fileInfo = new FileInfo(path);
+
+                SendFileContext sendContext = new SendFileContext() {
+                    FilePath = path,
+                    FileSize = fileInfo.Length
+                };
+                sendContext.FileHash = _fileHashCalculator.Calculate(path);
+
+                Guid transferID = Guid.NewGuid();
+                _sendFileContexts.TryAdd(transferID, sendContext);
+
+                SendFileEventArgs sendFileEventArgs = new SendFileEventArgs(
+                    transferID,
+                    sendContext.FilePath,
+                    sendContext.FileSize,
+                    SendFileState.Initializing,
+                    sendContext.BytesSent
+                );
+                OnFileSend(sendFileEventArgs);
+
+                FileInitialContent initialContent =
+                    new FileInitialContent(fileInfo.Name, sendContext.FileSize, sendContext.FileHash);
+                DebugInfo(transferID, sendContext);
+                AddMessageToSendQueue(transferID, MessageType.SendFileInitial, initialContent);
+            });
+        }
+
+        private void DebugInfo(Guid transferID, SendFileContext context) {
+            Debug.WriteLine($"TransferID: {transferID}, FilePath: {context.FilePath}, " +
+                $"FileSize: {context.FileSize}, BytesSent: {context.BytesSent}, " +
+                $"Initialized: {context.Initialized}, Cancelled: {context.Cancelled}");
+        }
+
+        private void DebugInfo(Guid transferID, ReceiveFileContext context) {
+            Debug.WriteLine($"TransferID: {transferID}, FilePath: {context.FilePath}, " +
+                $"FileSize: {context.FileSize}, BytesReceived: {context.BytesReceived}",
+                $"Initialized: {context.Initialized}, Cancelled: {context.Cancelled}");
+        }
+
+        // TODO: Add file initialize cancellation
     }
 }
