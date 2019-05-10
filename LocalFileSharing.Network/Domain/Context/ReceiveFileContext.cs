@@ -5,8 +5,7 @@ namespace LocalFileSharing.Network.Domain.Context {
         public long BytesReceived { get; set; }
         public BinaryWriter Writer { get; set; }
 
-        public override void Cancel() {
-            base.Cancel();
+        public override void End() {
             Writer.Close();
         }
     }

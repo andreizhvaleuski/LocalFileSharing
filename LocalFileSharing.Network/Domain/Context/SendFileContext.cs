@@ -8,10 +8,5 @@ namespace LocalFileSharing.Network.Domain.Context {
         public override void End() {
             Reader.Close();
         }
-
-        public override void Cancel() {
-            base.Cancel();
-            Reader.Close();
-        }
     }
 }
