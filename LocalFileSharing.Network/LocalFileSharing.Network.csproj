@@ -54,8 +54,6 @@
     <Compile Include="Framing\Content\ContentBase.cs" />
     <Compile Include="Framing\Content\FileContentBase.cs" />
     <Compile Include="Framing\Content\ResponseContent.cs" />
-    <Compile Include="Framing\Content\FileCancelContent.cs" />
-    <Compile Include="Framing\Content\FileEndContent.cs" />
     <Compile Include="Framing\Content\FileInitialContent.cs" />
     <Compile Include="Framing\Content\FileRegularContent.cs" />
     <Compile Include="Framing\ContentConverter.cs" />
