@@ -7,7 +7,6 @@
         public bool Cancelled { get; protected set; }
 
         public virtual void Initialize() {
-
             Initialized = true;
         }
 
