@@ -1,9 +1,9 @@
 ﻿namespace LocalFileSharing.Network.Framing {
     public enum ResponseType {
         Unspecified = 0,
-        ReceiveFileInitial = 1,
-        ReceiveFileRegular = 2,
-        ReceiveFileEnd = 3,
+        Keepalive = 1,
+        ReceiveFileInitial = 2,
+        ReceiveFileRegular = 3,
         ReceiveFileCancel = 4
     }
 }
