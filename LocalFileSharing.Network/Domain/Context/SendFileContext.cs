@@ -14,7 +14,7 @@ namespace LocalFileSharing.Network.Domain.Context {
         }
 
         public override void End() {
-            Reader.Close();
+            Reader?.Close();
         }
     }
 }
