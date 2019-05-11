@@ -6,9 +6,6 @@ using LocalFileSharing.Network.Domain.States;
 
 namespace ClientSend {
     class Program {
-        static Dictionary<Guid, ConsoleColor> consColors = new Dictionary<Guid, ConsoleColor>();
-        static int s = 1;
-
         static FileSharingServer server;
         static FileSharingClient client;
         static void Main(string[] args) {
@@ -30,8 +27,6 @@ namespace ClientSend {
 
         private static void Output(object sender, SendFileEventArgs e) {
             if (e.SendState == SendFileState.Initializing) {
-                consColors.Add(e.TransferID, (ConsoleColor)s);
-                s++;
             }
             else if (e.SendState == SendFileState.Sending) {
             }
@@ -47,7 +42,6 @@ namespace ClientSend {
             else if (e.SendState == SendFileState.Completed) {
 
             }
-            Console.ForegroundColor = consColors[e.TransferID];
             Console.WriteLine($"{e.TransferID} :: {e.SendState} :: {e.FilePath} :: {e.FileSize} :: {e.BytesSent}");
         }
     }

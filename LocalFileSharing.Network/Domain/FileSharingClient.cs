@@ -258,6 +258,14 @@ namespace LocalFileSharing.Network.Domain {
             bool initialized = false;
             if (responseType == ResponseType.ReceiveFileInitial) {
                 sendContext.Initialize();
+                SendFileEventArgs sendFileEventArgs = new SendFileEventArgs(
+                    transferID,
+                    sendContext.FilePath,
+                    sendContext.FileSize,
+                    SendFileState.Initializing,
+                    sendContext.BytesSent
+                );
+                OnFileSend(sendFileEventArgs);
                 initialized = true;
             }
             if (responseType == ResponseType.ReceiveFileRegular || initialized) {
@@ -487,7 +495,7 @@ namespace LocalFileSharing.Network.Domain {
                     transferID,
                     sendContext.FilePath,
                     sendContext.FileSize,
-                    SendFileState.Initializing,
+                    SendFileState.Hashing,
                     sendContext.BytesSent
                 );
                 OnFileSend(sendFileEventArgs);
