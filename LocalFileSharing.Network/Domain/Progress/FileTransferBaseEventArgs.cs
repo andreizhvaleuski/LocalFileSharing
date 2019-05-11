@@ -22,9 +22,9 @@ namespace LocalFileSharing.Network.Domain.Progress {
                 );
             }
 
-            if (!File.Exists(filePath)) {
-                throw new FileNotFoundException($"File not found.", filePath);
-            }
+            //if (!File.Exists(filePath)) {
+            //    throw new FileNotFoundException($"File not found.", filePath);
+            //}
 
             if (fileSize <= 0) {
                 throw new ArgumentOutOfRangeException(

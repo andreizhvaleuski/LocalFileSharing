@@ -160,7 +160,7 @@ namespace LocalFileSharing.Network.Domain {
                 FileHash = content.FileHash
             };
             bool result = _receiveFileContexts.TryAdd(transferID, context);
-            if (result) {
+            if (!result) {
                 return;
             }
 
@@ -258,8 +258,9 @@ namespace LocalFileSharing.Network.Domain {
             bool initialized = false;
             if (responseType == ResponseType.ReceiveFileInitial) {
                 sendContext.Initialize();
+                initialized = true;
             }
-            else if (responseType == ResponseType.ReceiveFileRegular || initialized) {
+            if (responseType == ResponseType.ReceiveFileRegular || initialized) {
                 if (sendContext.BytesSent == sendContext.FileSize) {
                     SendFileEventArgs sendFileEventArgs = new SendFileEventArgs(
                         transferID,
@@ -336,6 +337,9 @@ namespace LocalFileSharing.Network.Domain {
             if (!result) {
                 return false;
             }
+            if (recvContext.Initialized) {
+                return true;
+            }
 
             recvContext.Initialize();
 
@@ -350,6 +354,12 @@ namespace LocalFileSharing.Network.Domain {
 
             DebugInfo(transferID, recvContext);
             AddResponseToSendQueue(transferID, ResponseType.ReceiveFileInitial);
+            return true;
+        }
+
+        public bool InitializeReceive() {
+            var result = _receiveFileContexts.SingleOrDefault();
+            InitializeReceive(result.Key);
             return true;
         }
 
@@ -383,6 +393,7 @@ namespace LocalFileSharing.Network.Domain {
                 if (!result) {
                     continue;
                 }
+
                 _client.SendBytes(messageBuffer);
             }
         }
@@ -459,7 +470,7 @@ namespace LocalFileSharing.Network.Domain {
             });
         }
 
-        public async Task SendFile(string path) {
+        public async Task SendFileAsync(string path) {
             await Task.Run(() => {
                 FileInfo fileInfo = new FileInfo(path);
 
