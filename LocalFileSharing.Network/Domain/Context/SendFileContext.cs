@@ -5,7 +5,7 @@ namespace LocalFileSharing.Network.Domain.Context {
         public long BytesSent { get; set; }
         public BinaryReader Reader { get; protected set; }
 
-        public override void Initialize() {
+        public override void Initialize(string newFilePath = null) {
             if (Initialized) {
                 return;
             }

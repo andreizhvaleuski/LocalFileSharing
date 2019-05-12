@@ -5,10 +5,14 @@ namespace LocalFileSharing.Network.Domain.Context {
         public long BytesReceived { get; set; }
         public BinaryWriter Writer { get; protected set; }
 
-        public override void Initialize() {
+        public override void Initialize(string filePath) {
             if (Initialized) {
                 return;
             }
+            if (!File.Exists(filePath)) {
+                throw new FileNotFoundException();
+            }
+            FilePath = filePath;
             Writer = new BinaryWriter(File.Create(FilePath));
             base.Initialize();
         }

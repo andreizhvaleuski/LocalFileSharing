@@ -6,14 +6,13 @@
         public bool Initialized { get; protected set; }
         public bool Cancelled { get; protected set; }
 
-        public virtual void Initialize() {
+        public virtual void Initialize(string newFilePath = null) {
             Initialized = true;
         }
 
         public abstract void End();
 
         public virtual void Cancel() {
-            End();
             Cancelled = true;
         }
     }
