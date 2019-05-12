@@ -63,8 +63,6 @@ namespace LocalFileSharing.Network.Domain {
 
             _connectionCancellationTokenSource = new CancellationTokenSource();
 
-            SetDownloadDirectory(@"D:\Downloads");
-
             Initialize(_connectionCancellationTokenSource.Token);
         }
 
