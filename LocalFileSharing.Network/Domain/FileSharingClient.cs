@@ -153,7 +153,7 @@ namespace LocalFileSharing.Network.Domain {
 
         private void ProcessSendFileInitialMessage(Guid transferID, FileInitialContent content) {
             ReceiveFileContext context = new ReceiveFileContext() {
-                FilePath = Path.Combine(DownloadPath, content.FileName),
+                FilePath = content.FileName,
                 FileSize = content.FileSize,
                 FileHash = content.FileHash
             };
