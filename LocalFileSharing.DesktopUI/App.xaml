@@ -11,6 +11,7 @@
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <converters:IPAddressToStringConverter x:Key="IPAddressToStringConverter" />
+                    <converters:BytesToHumanReadableStringConverter x:Key="BytesToHumanReadableStringConverter" />
                 </ResourceDictionary>
                 <ResourceDictionary Source="Styles/Colors.xaml" />
                 <ResourceDictionary Source="Styles/Fonts.xaml" />

@@ -96,6 +96,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AppBootstrapper.cs" />
+    <Compile Include="Converters\BytesToHumanReadableStringConverter.cs" />
     <Compile Include="Converters\IPAddressToStringConverter.cs" />
     <Compile Include="Messages\ConnectedMessage.cs" />
     <Compile Include="Messages\ErrorMessage.cs" />
@@ -224,5 +225,6 @@
       <Name>LocalFileSharing.Network</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

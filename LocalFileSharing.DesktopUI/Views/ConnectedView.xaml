@@ -80,22 +80,24 @@
                           SelectedItem="{Binding DownloadsSelectedItem}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Name" Width="auto" 
+                            <GridViewColumn Header="Name" Width="250" 
                                             DisplayMemberBinding="{Binding FileName, Mode=OneWay}" />
-                            <GridViewColumn Header="Size" Width="auto" 
+                            <GridViewColumn Header="Size" Width="50" 
                                             DisplayMemberBinding="{Binding FileSize, Mode=OneWay}" />
-                            <GridViewColumn Header="Progress" Width="auto">
+                            <GridViewColumn Header="Progress" Width="100">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
+                                        <Grid>
                                             <ProgressBar Width="50" Value="{Binding Progress, Mode=OneWay}" />
-                                            <TextBlock Text="{Binding Progress, Mode=OneWay}" />
-                                            <TextBlock Text="%" />
-                                        </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Progress, Mode=OneWay}" />
+                                                <TextBlock Text="%" />
+                                            </StackPanel>
+                                        </Grid>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="State" Width="auto" DisplayMemberBinding="{Binding State, Mode=OneWay}"/>
+                            <GridViewColumn Header="State" Width="70" DisplayMemberBinding="{Binding State, Mode=OneWay}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
@@ -110,22 +112,26 @@
                           SelectedItem="{Binding UploadsSelectedItem}">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Name" Width="auto" 
+                            <GridViewColumn Header="Name" Width="250" 
                                             DisplayMemberBinding="{Binding FileName, Mode=OneWay}" />
-                            <GridViewColumn Header="Size" Width="auto" 
-                                            DisplayMemberBinding="{Binding FileSize, Mode=OneWay}" />
-                            <GridViewColumn Header="Progress" Width="auto">
+                            <GridViewColumn Header="Size" Width="50" 
+                                            DisplayMemberBinding="{Binding FileSize, Mode=OneWay, Converter={StaticResource BytesToHumanReadableStringConverter}}" />
+                            <GridViewColumn Header="Progress" Width="100">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <ProgressBar Width="50" Value="{Binding Progress, Mode=OneWay}" />
-                                            <TextBlock Text="{Binding Progress, Mode=OneWay}" />
-                                            <TextBlock Text="%" />
-                                        </StackPanel>
+                                        <Grid>
+                                            <ProgressBar Width="50" Value="{Binding Progress, Mode=OneWay}"
+                                                         HorizontalContentAlignment="Stretch"/>
+                                            <StackPanel Orientation="Horizontal" 
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Progress, Mode=OneWay}" />
+                                                <TextBlock Text="%" />
+                                            </StackPanel>
+                                        </Grid>
                                     </DataTemplate>
                                 </GridViewColumn.CellTemplate>
                             </GridViewColumn>
-                            <GridViewColumn Header="State" Width="auto" DisplayMemberBinding="{Binding State, Mode=OneWay}"/>
+                            <GridViewColumn Header="State" Width="70" DisplayMemberBinding="{Binding State, Mode=OneWay}"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
