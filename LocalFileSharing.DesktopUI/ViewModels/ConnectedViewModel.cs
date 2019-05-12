@@ -114,7 +114,6 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
             _fileSharingClient = client;
             _fileSharingClient.FileReceive += ProcessDownloadInfo;
             _fileSharingClient.FileSend += ProcessUploadInfo;
-            _fileSharingClient.SetDownloadDirectory(@"D:\LFS-Tests\Receive");
 
             Downloads = new BindableCollection<DownloadInfo>();
             Uploads = new BindableCollection<UploadInfo>();

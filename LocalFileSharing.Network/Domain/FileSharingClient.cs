@@ -427,13 +427,6 @@ namespace LocalFileSharing.Network.Domain {
             return messageBuffer;
         }
 
-        public void SetDownloadDirectory(string path) {
-            if (!Directory.Exists(path)) {
-                Directory.CreateDirectory(path);
-            }
-            DownloadPath = path;
-        }
-
         private void OnFileSend(SendFileEventArgs e) {
             FileSend?.Invoke(this, e);
         }
