@@ -1,7 +1,7 @@
 ﻿using LocalFileSharing.Network.Domain.States;
 
 namespace LocalFileSharing.DesktopUI.Models {
-    public class Download : TransferBase {
+    public class DownloadInfo : TransferInfoBase {
         private long _bytesReceived;
         private ReceiveFileState _state;
 

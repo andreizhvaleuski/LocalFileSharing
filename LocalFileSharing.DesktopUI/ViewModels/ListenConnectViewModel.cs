@@ -31,9 +31,10 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
         }
 
         private async void GetListenIPEndPoint() {
-            IPEndPoint endPoint = await _listenFileSharingClient.GetServerIPEndPointAsync(default);
+            IPEndPoint endPoint = await _listenFileSharingClient.GetServerIPEndPointAsync();
             ListenIP = endPoint.Address;
             ListenPort = TcpSocketBase.MinAllowedPort;
+            _connectIP = IPAddress.Parse(ListenIP.ToString());
         }
 
         public IPAddress ListenIP {
@@ -139,7 +140,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
         public async void Connect() {
             Connecting = true;
             await Task.Run(() => {
-                _connectFileSharingClient = new FileSharingClient(ConnectIP, ConnectPort);
+                _connectFileSharingClient = new FileSharingClient(new IPEndPoint(ConnectIP, ConnectPort));
             });
             _eventAgregator.PublishOnUIThread(new ConnectedMessage(_connectFileSharingClient));
             Connecting = false;

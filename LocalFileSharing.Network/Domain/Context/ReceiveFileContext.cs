@@ -9,7 +9,7 @@ namespace LocalFileSharing.Network.Domain.Context {
             if (Initialized) {
                 return;
             }
-            if (!File.Exists(filePath)) {
+            if (File.Exists(filePath)) {
                 throw new FileNotFoundException();
             }
             FilePath = filePath;

@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 using LocalFileSharing.Network.Domain;
 
 namespace LocalFileSharing.DesktopUI.Messages {

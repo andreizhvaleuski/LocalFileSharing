@@ -1,107 +1,183 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Linq;
+
 using Caliburn.Micro;
+
+using LocalFileSharing.DesktopUI.Models;
+using LocalFileSharing.DesktopUI.Services;
 using LocalFileSharing.Network.Domain;
 using LocalFileSharing.Network.Domain.Progress;
+using LocalFileSharing.Network.Domain.States;
 
 namespace LocalFileSharing.DesktopUI.ViewModels {
     public class ConnectedViewModel : Screen {
-        private bool _sending;
-        private bool _receiving;
-        private long _download;
-        private long _upload;
+        public BindableCollection<DownloadInfo> Downloads { get; private set; }
+        public BindableCollection<UploadInfo> Uploads { get; private set; }
 
-        private readonly Progress<SendFileEventArgs> sendProgress;
-        private readonly Progress<ReceiveFileEventArgs> receiveProgress;
+        private DownloadInfo _downloadsSelectedItem;
+        private UploadInfo _uploadsSelectedItem;
 
-        public ConnectedViewModel() {
-            sendProgress = new Progress<SendFileEventArgs>();
-            sendProgress.ProgressChanged += UploadReport;
+        private bool _acceptingDownload;
+        private bool _cancellingDownload;
+        private bool _uploadingFile;
+        private bool _cancellingUpload;
 
-            receiveProgress = new Progress<ReceiveFileEventArgs>();
-            receiveProgress.ProgressChanged += DownloadReport;
-        }
+        private readonly FileSharingClient _fileSharingClient;
+        private readonly IDialogService _dialogService;
 
-        public FileSharingClient FileSharingClient { get; set; }
-
-        public bool Sending {
-            get { return _sending; }
+        public DownloadInfo DownloadsSelectedItem {
+            get { return _downloadsSelectedItem; }
             set {
-                if (_sending == value) {
-                    return;
-                }
-
-                _sending = value;
-                NotifyOfPropertyChange(() => CanReceive);
-                NotifyOfPropertyChange(() => CanSend);
+                Set(ref _downloadsSelectedItem, value, nameof(DownloadsSelectedItem));
+                NotifyOfPropertyChange(nameof(CanAcceptDownload));
+                NotifyOfPropertyChange(nameof(CanCancelDownload));
             }
         }
 
-        public bool Receiving {
-            get { return _receiving; }
+        public UploadInfo UploadsSelectedItem {
+            get { return _uploadsSelectedItem; }
             set {
-                if (_receiving == value) {
-                    return;
-                }
-
-                _receiving = value;
-                NotifyOfPropertyChange(() => CanReceive);
-                NotifyOfPropertyChange(() => CanSend);
+                Set(ref _uploadsSelectedItem, value, nameof(UploadsSelectedItem));
+                NotifyOfPropertyChange(nameof(CanCancelUpload));
             }
         }
 
-        public long Download {
-            get { return _download; }
+        public bool AcceptingDownload {
+            get { return _acceptingDownload; }
             set {
-                if (_download == value) {
-                    return;
-                }
-
-                _download = value;
-                NotifyOfPropertyChange(() => Download);
+                Set(ref _acceptingDownload, value, nameof(AcceptDownload));
+                NotifyOfPropertyChange(nameof(CanAcceptDownload));
             }
         }
 
-        public long Upload {
-            get { return _upload; }
+        public bool CancellingDownload {
+            get { return _cancellingDownload; }
             set {
-                if (_upload == value) {
-                    return;
+                Set(ref _cancellingDownload, value, nameof(CancellingDownload));
+                NotifyOfPropertyChange(nameof(CanCancelDownload));
+            }
+        }
+
+        public bool UploadingFile {
+            get { return _uploadingFile; }
+            set {
+                Set(ref _uploadingFile, value, nameof(UploadingFile));
+                NotifyOfPropertyChange(nameof(CanUploadFile));
+            }
+        }
+
+        public bool CancellingUpload {
+            get { return _cancellingUpload; }
+            set {
+                Set(ref _cancellingUpload, value, nameof(CancellingUpload));
+                NotifyOfPropertyChange(nameof(CanCancelUpload));
+            }
+        }
+
+        public bool CanAcceptDownload {
+            get {
+                return !AcceptingDownload && 
+                    DownloadsSelectedItem != null &&
+                    DownloadsSelectedItem.State == ReceiveFileState.Initializing;
+            }
+        }
+
+        public bool CanCancelDownload {
+            get {
+                return !CancellingDownload &&
+                    DownloadsSelectedItem != null &&
+                    DownloadsSelectedItem.State != ReceiveFileState.Cancelled &&
+                    DownloadsSelectedItem.State != ReceiveFileState.Hashing &&
+                    DownloadsSelectedItem.State != ReceiveFileState.Completed &&
+                    DownloadsSelectedItem.State != ReceiveFileState.Failed;
+            }
+        }
+
+        public bool CanUploadFile {
+            get {
+                return !UploadingFile;
+            }
+        }
+
+        public bool CanCancelUpload {
+            get {
+                return !CancellingUpload &&
+                    UploadsSelectedItem != null &&
+                    UploadsSelectedItem.State != SendFileState.Completed &&
+                    UploadsSelectedItem.State != SendFileState.Cancelled &&
+                    UploadsSelectedItem.State != SendFileState.Failed;
+            }
+        }
+
+        public ConnectedViewModel(FileSharingClient client, IDialogService dialogService) {
+            _dialogService = dialogService;
+
+            _fileSharingClient = client;
+            _fileSharingClient.FileReceive += ProcessDownloadInfo;
+            _fileSharingClient.FileSend += ProcessUploadInfo;
+            _fileSharingClient.SetDownloadDirectory(@"D:\LFS-Tests\Receive");
+
+            Downloads = new BindableCollection<DownloadInfo>();
+            Uploads = new BindableCollection<UploadInfo>();
+        }
+
+        public void AcceptDownload() {
+            AcceptingDownload = true;
+            if (_dialogService.SaveFileDialog(DownloadsSelectedItem.FileName) == true) {
+                _fileSharingClient.InitializeReceive(DownloadsSelectedItem.TransferID, _dialogService.SaveFilePath);
+            }
+            AcceptingDownload = false;
+        }
+
+        public void CancelDownload() {
+            _fileSharingClient.CancellReceive(DownloadsSelectedItem.TransferID);
+        }
+
+        public async void UploadFile() {
+            UploadingFile = true;
+            if (_dialogService.OpenFileDialog() == true) {
+                foreach (string filePath in _dialogService.OpenFilePaths) {
+                    _fileSharingClient.SendFileAsync(filePath);
                 }
+            }
+            UploadingFile = false;
+        }
 
-                _upload = value;
-                NotifyOfPropertyChange(() => Upload);
+        public void CancelUpload() {
+            _fileSharingClient.CancellSend(UploadsSelectedItem.TransferID);
+        }
+
+        private void ProcessUploadInfo(object sender, SendFileEventArgs e) {
+            if (e.SendState == SendFileState.Hashing) {
+                UploadInfo upload = new UploadInfo() {
+                    TransferID = e.TransferID,
+                    FilePath = e.FilePath,
+                    FileSize = e.FileSize,
+                    State = e.SendState
+                };
+                Uploads.Add(upload);
+            }
+            else {
+                UploadInfo upload = Uploads.First(u => e.TransferID == u.TransferID);
+                upload.BytesSent = e.BytesSent;
+                upload.State = e.SendState;
             }
         }
 
-        public bool CanReceive => !(Sending || Receiving);
-
-        public async void Receive() {
-            await FileSharingClient.ReceiveFileAsync(@"F:\Downloads", receiveProgress, default);
-        }
-
-        public bool CanSend => !(Sending || Receiving);
-
-        public async void Send() {
-            string path =
-                @"D:\Downloads\Torrents\Programs\ubuntu-19.04-desktop-amd64.iso";
-            await FileSharingClient.SendFileAsync(path, sendProgress, default);
-        }
-
-        private void DownloadReport(object sender, ReceiveFileEventArgs e) {
-            Debug.WriteLine(e.ReceiveState);
-            if (e.ReceiveState != Network.Domain.States.ReceiveFileState.Receiving) {
-                return;
+        private void ProcessDownloadInfo(object sender, ReceiveFileEventArgs e) {
+            if (e.ReceiveState == ReceiveFileState.Initializing) {
+                DownloadInfo download = new DownloadInfo() {
+                    TransferID = e.TransferID,
+                    FilePath = e.FilePath,
+                    FileSize = e.FileSize,
+                    State = e.ReceiveState
+                };
+                Downloads.Add(download);
             }
-            Download = e.BytesRecived * 100 / e.FileData.FileSize;
-        }
-
-        private void UploadReport(object sender, SendFileEventArgs e) {
-            Debug.WriteLine(e.SendState);
-            if (e.SendState != Network.Domain.States.SendFileState.Sending) {
-                return;
+            else {
+                DownloadInfo download = Downloads.First(d => e.TransferID == d.TransferID);
+                download.BytesReceived = e.BytesRecived;
+                download.State = e.ReceiveState;
             }
-            Upload = e.BytesSent * 100 / e.FileData.FileSize;
         }
     }
 }

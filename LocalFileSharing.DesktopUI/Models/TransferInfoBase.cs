@@ -4,7 +4,7 @@ using System.IO;
 using Caliburn.Micro;
 
 namespace LocalFileSharing.DesktopUI.Models {
-    public abstract class TransferBase : PropertyChangedBase {
+    public abstract class TransferInfoBase : PropertyChangedBase {
         private Guid _transferID;
         private string _filePath;
         private long _fileSize;

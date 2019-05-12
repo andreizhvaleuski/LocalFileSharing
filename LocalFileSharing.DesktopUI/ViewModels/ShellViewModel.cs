@@ -4,30 +4,24 @@ using System.Threading.Tasks;
 using Caliburn.Micro;
 
 using LocalFileSharing.DesktopUI.Messages;
+using LocalFileSharing.DesktopUI.Services;
 
 namespace LocalFileSharing.DesktopUI.ViewModels {
     public class ShellViewModel
         : Conductor<IScreen>, IHandle<ConnectedMessage>, IHandle<ErrorMessage> {
         private readonly IEventAggregator _eventAggregator;
 
-        private readonly ListenConnectViewModel _listenConnectVM;
-        private readonly ConnectedViewModel _connectedVM;
-        private readonly ErrorViewModel _errorVM;
+        private ListenConnectViewModel _listenConnectVM;
+        private ConnectedViewModel _connectedVM;
+        private ErrorViewModel _errorVM;
 
-        public ShellViewModel(
-            IEventAggregator eventAggregator,
-            ListenConnectViewModel listenConnectVM,
-            ConnectedViewModel connectedVM,
-            ErrorViewModel errorVM
-        ) {
-            _eventAggregator = eventAggregator;
-
-            _listenConnectVM = listenConnectVM;
-            _connectedVM = connectedVM;
-            _errorVM = errorVM;
-
+        public ShellViewModel(IEventAggregator eventAggregator, ListenConnectViewModel listenConnectVM, ErrorViewModel errorVM) {
             DisplayName = "Local File Sharing";
 
+            _listenConnectVM = listenConnectVM;
+            _errorVM = errorVM;
+
+            _eventAggregator = eventAggregator;
             _eventAggregator.Subscribe(this);
 
             ListenOrConnect();
@@ -53,7 +47,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
                 throw new ArgumentNullException(nameof(message));
             }
 
-            _connectedVM.FileSharingClient = message.FileSharingClient;
+            _connectedVM = new ConnectedViewModel(message.FileSharingClient, new DialogService());
 
             if (ActiveItem == _connectedVM) {
                 return;

@@ -57,66 +57,83 @@
                     Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
                     Content="Disconnect" Style="{StaticResource MainButton}"
                     Margin="10"/>
-
-                <Button 
-                    Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
-                    Content="Downloads" Style="{StaticResource MainButton}"
-                    Margin="10" />
-
-                <Button 
-                    Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2"
-                    Content="Uploads" Style="{StaticResource MainButton}"
-                    Margin="10" />
             </Grid>
         </ScrollViewer>
-        
+
         <ScrollViewer
             Grid.Column="1"
             HorizontalScrollBarVisibility="Auto" 
             VerticalScrollBarVisibility="Auto">
             <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="auto" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
+                <ListView Grid.Row="0" Grid.Column="0" 
+                          ItemsSource="{Binding Downloads}"
+                          SelectionMode="Single"
+                          SelectedItem="{Binding DownloadsSelectedItem}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" Width="auto" 
+                                            DisplayMemberBinding="{Binding FileName, Mode=OneWay}" />
+                            <GridViewColumn Header="Size" Width="auto" 
+                                            DisplayMemberBinding="{Binding FileSize, Mode=OneWay}" />
+                            <GridViewColumn Header="Progress" Width="auto">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ProgressBar Width="50" Value="{Binding Progress, Mode=OneWay}" />
+                                            <TextBlock Text="{Binding Progress, Mode=OneWay}" />
+                                            <TextBlock Text="%" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="State" Width="auto" DisplayMemberBinding="{Binding State, Mode=OneWay}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <StackPanel Grid.Row="0" Grid.Column="1">
+                    <Button x:Name="AcceptDownload" Content="Accept" Style="{StaticResource MainButton}" />
+                    <Button x:Name="CancelDownload" Content="Cancel" Style="{StaticResource MainButton}" />
+                </StackPanel>
 
-                    <StackPanel
-                        Grid.Row="0" Grid.RowSpan="3" Grid.Column="0">
-                        <TextBlock Text="File name:"/>
-                        <TextBlock Text="File size:"/>
-                        <ProgressBar Height="25"/>
-                        <TextBlock Text="Download state:"/>
-                        <TextBlock Text="Send"/>
-                    </StackPanel>
-                    
-                    <StackPanel 
-                        Grid.Row="0" Grid.RowSpan="3" Grid.Column="1">
-                        <Button
-                            Content="Downoload"
-                            Style="{StaticResource MainButton}" 
-                            Margin="10" />
-                        <Button
-                            Content="Cancel"
-                            Style="{StaticResource MainButton}" 
-                            Margin="10" />
-                    </StackPanel>
-                </Grid>
+                <ListView Grid.Row="1" Grid.Column="0"        
+                          ItemsSource="{Binding Uploads}"
+                          SelectionMode="Single"
+                          SelectedItem="{Binding UploadsSelectedItem}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Name" Width="auto" 
+                                            DisplayMemberBinding="{Binding FileName, Mode=OneWay}" />
+                            <GridViewColumn Header="Size" Width="auto" 
+                                            DisplayMemberBinding="{Binding FileSize, Mode=OneWay}" />
+                            <GridViewColumn Header="Progress" Width="auto">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ProgressBar Width="50" Value="{Binding Progress, Mode=OneWay}" />
+                                            <TextBlock Text="{Binding Progress, Mode=OneWay}" />
+                                            <TextBlock Text="%" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="State" Width="auto" DisplayMemberBinding="{Binding State, Mode=OneWay}"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+                <StackPanel Grid.Row="1" Grid.Column="1">
+                    <Button x:Name="UploadFile" Content="Upload" Style="{StaticResource MainButton}" />
+                    <Button x:Name="CancelUpload" Content="Cancel" Style="{StaticResource MainButton}" />
+                </StackPanel>
 
-                <Grid Grid.Row="1">
-                    
-                </Grid>
             </Grid>
         </ScrollViewer>
     </Grid>

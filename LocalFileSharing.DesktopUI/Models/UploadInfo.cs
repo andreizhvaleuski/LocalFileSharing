@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using LocalFileSharing.Network.Domain.States;
 
 namespace LocalFileSharing.DesktopUI.Models {
-    public class Upload : TransferBase {
+    public class UploadInfo : TransferInfoBase {
         private long _bytesSent;
         private SendFileState _state;
 

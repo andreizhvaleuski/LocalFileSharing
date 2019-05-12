@@ -99,6 +99,11 @@
     <Compile Include="Converters\IPAddressToStringConverter.cs" />
     <Compile Include="Messages\ConnectedMessage.cs" />
     <Compile Include="Messages\ErrorMessage.cs" />
+    <Compile Include="Models\DownloadInfo.cs" />
+    <Compile Include="Models\TransferInfoBase.cs" />
+    <Compile Include="Models\UploadInfo.cs" />
+    <Compile Include="Services\DialogService.cs" />
+    <Compile Include="Services\IDialogService.cs" />
     <Compile Include="ViewModels\ConnectedViewModel.cs" />
     <Compile Include="ViewModels\ErrorViewModel.cs" />
     <Compile Include="ViewModels\ListenConnectViewModel.cs" />

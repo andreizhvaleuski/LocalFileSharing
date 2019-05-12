@@ -186,6 +186,7 @@ namespace LocalFileSharing.Network.Domain {
             }
 
             if (recvContext.Cancelled) {
+                recvContext.End();
                 AddResponseToSendQueue(transferID, ResponseType.ReceiveFileCancel);
                 _receiveFileContexts.TryRemove(transferID, out _);
                 return;
@@ -232,7 +233,6 @@ namespace LocalFileSharing.Network.Domain {
             }
 
             context.Cancel();
-            DebugInfo(transferID, context);
 
             ReceiveFileEventArgs recvFileEventArgs = new ReceiveFileEventArgs(
                 transferID,
@@ -337,7 +337,7 @@ namespace LocalFileSharing.Network.Domain {
             _messagesToSend.Enqueue(responseBuffer);
         }
 
-        public bool InitializeReceive(Guid transferID) {
+        public bool InitializeReceive(Guid transferID, string newFilePath) {
             bool result = _receiveFileContexts.TryGetValue(
                 transferID,
                 out ReceiveFileContext recvContext
@@ -349,7 +349,7 @@ namespace LocalFileSharing.Network.Domain {
                 return true;
             }
 
-            recvContext.Initialize();
+            recvContext.Initialize(newFilePath);
 
             ReceiveFileEventArgs recvFileEventArgs = new ReceiveFileEventArgs(
                 transferID,
@@ -365,19 +365,21 @@ namespace LocalFileSharing.Network.Domain {
             return true;
         }
 
-        public bool InitializeReceive() {
-            var result = _receiveFileContexts.SingleOrDefault();
-            InitializeReceive(result.Key);
-            return true;
-        }
-
         public bool CancellSend(Guid transferID) {
             bool result = _sendFileContexts.TryGetValue(transferID, out SendFileContext context);
             if (!result) {
                 return false;
             }
-            DebugInfo(transferID, context);
             context.Cancel();
+            SendFileEventArgs sendFileEventArgs = new SendFileEventArgs(
+                transferID,
+                context.FilePath,
+                context.FileSize,
+                SendFileState.Cancelled,
+                context.BytesSent
+            );
+            OnFileSend(sendFileEventArgs);
+            AddMessageToSendQueue(transferID, MessageType.SendFileCancel);
             return true;
         }
 
@@ -386,8 +388,16 @@ namespace LocalFileSharing.Network.Domain {
             if (!result) {
                 return false;
             }
-            DebugInfo(transferID, context);
             context.Cancel();
+            ReceiveFileEventArgs recvFileEventArgs = new ReceiveFileEventArgs(
+                transferID,
+                context.FilePath,
+                context.FileSize,
+                ReceiveFileState.Cancelled,
+                context.BytesReceived
+            );
+            OnFileReceive(recvFileEventArgs);
+            AddResponseToSendQueue(transferID, ResponseType.ReceiveFileCancel);
             return true;
         }
 
@@ -486,11 +496,8 @@ namespace LocalFileSharing.Network.Domain {
                     FilePath = path,
                     FileSize = fileInfo.Length
                 };
-                sendContext.FileHash = _fileHashCalculator.Calculate(path);
 
                 Guid transferID = Guid.NewGuid();
-                _sendFileContexts.TryAdd(transferID, sendContext);
-
                 SendFileEventArgs sendFileEventArgs = new SendFileEventArgs(
                     transferID,
                     sendContext.FilePath,
@@ -500,6 +507,17 @@ namespace LocalFileSharing.Network.Domain {
                 );
                 OnFileSend(sendFileEventArgs);
 
+                sendContext.FileHash = _fileHashCalculator.Calculate(path);
+
+                _sendFileContexts.TryAdd(transferID, sendContext);
+                sendFileEventArgs = new SendFileEventArgs(
+                    transferID,
+                    sendContext.FilePath,
+                    sendContext.FileSize,
+                    SendFileState.Initializing,
+                    sendContext.BytesSent
+                );
+                OnFileSend(sendFileEventArgs);
                 FileInitialContent initialContent =
                     new FileInitialContent(fileInfo.Name, sendContext.FileSize, sendContext.FileHash);
                 DebugInfo(transferID, sendContext);
