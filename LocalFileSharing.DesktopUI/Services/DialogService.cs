@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Windows;
 using Microsoft.Win32;
 
 namespace LocalFileSharing.DesktopUI.Services {
@@ -33,6 +34,11 @@ namespace LocalFileSharing.DesktopUI.Services {
                 return true;
             }
             return false;
+        }
+
+        public bool ShowMessage(string messageText) {
+            MessageBoxResult result = MessageBox.Show(messageText, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            return result == MessageBoxResult.OK;
         }
     }
 }

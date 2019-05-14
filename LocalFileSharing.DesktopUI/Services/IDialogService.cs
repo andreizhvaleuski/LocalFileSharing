@@ -4,5 +4,6 @@
         string SaveFilePath { get; }
         bool OpenFileDialog();
         bool SaveFileDialog(string fileName);
+        bool ShowMessage(string messageText); 
     }
 }
