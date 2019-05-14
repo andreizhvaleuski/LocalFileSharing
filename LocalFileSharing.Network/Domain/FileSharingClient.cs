@@ -21,6 +21,7 @@ namespace LocalFileSharing.Network.Domain {
 
         public event EventHandler<SendFileEventArgs> FileSend;
         public event EventHandler<ReceiveFileEventArgs> FileReceive;
+        public event EventHandler<ConnectionLostEventArgs> ConnectionLost;
 
         public string DownloadPath { get; private set; }
 
@@ -78,8 +79,15 @@ namespace LocalFileSharing.Network.Domain {
 
         private void StartReceive(CancellationToken cancellationToken) {
             while (!cancellationToken.IsCancellationRequested) {
-                byte[] messageBuffer = ReceiveMessage();
-                _receivedMessages.Enqueue(messageBuffer);
+                try {
+                    byte[] messageBuffer = ReceiveMessage();
+                    _receivedMessages.Enqueue(messageBuffer);
+                }
+                catch (Exception e) {
+                    ConnectionLostEventArgs connectionLostEA = new ConnectionLostEventArgs(e);
+                    OnConnectionLost(connectionLostEA);
+                    break;
+                }
             }
         }
 
@@ -433,6 +441,10 @@ namespace LocalFileSharing.Network.Domain {
 
         private void OnFileReceive(ReceiveFileEventArgs e) {
             FileReceive?.Invoke(this, e);
+        }
+
+        private void OnConnectionLost(ConnectionLostEventArgs e) {
+            ConnectionLost?.Invoke(this, e);
         }
 
         private async void CheckHashAsync(Guid transferID) {

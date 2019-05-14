@@ -27,10 +27,6 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
             ListenOrConnect();
         }
 
-        public void Exit() {
-            TryClose();
-        }
-
         public bool CanListenOrConnect => !(ActiveItem == _listenConnectVM);
 
         public void ListenOrConnect() {
@@ -47,7 +43,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
                 throw new ArgumentNullException(nameof(message));
             }
 
-            _connectedVM = new ConnectedViewModel(message.FileSharingClient, new DialogService());
+            _connectedVM = new ConnectedViewModel(message.FileSharingClient, new DialogService(), _eventAggregator);
 
             if (ActiveItem == _connectedVM) {
                 return;
@@ -62,15 +58,8 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
                 throw new ArgumentNullException(nameof(message));
             }
 
-            _errorVM.Title = message.Title;
-            _errorVM.Description = message.Description;
-
-            if (ActiveItem == _errorVM) {
-                return;
-            }
-
             ActiveItem.TryClose();
-            ActivateItem(_errorVM);
+            ActivateItem(_listenConnectVM);
         }
     }
 }

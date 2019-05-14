@@ -34,12 +34,6 @@ namespace LocalFileSharing.Network.Domain {
                 throw new ArgumentNullException(nameof(ipEndPoint));
             }
 
-            if (FileSharingClient != null) {
-                throw new InvalidOperationException(
-                    $"Can not start listening while client exists."
-                );
-            }
-
             if (_tcpServer is null) {
                 _tcpServer = new TcpServer(ipEndPoint);
             }

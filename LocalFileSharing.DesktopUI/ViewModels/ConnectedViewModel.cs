@@ -1,7 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 using Caliburn.Micro;
-
+using LocalFileSharing.DesktopUI.Messages;
 using LocalFileSharing.DesktopUI.Models;
 using LocalFileSharing.DesktopUI.Services;
 using LocalFileSharing.Network.Domain;
@@ -23,6 +24,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
 
         private readonly FileSharingClient _fileSharingClient;
         private readonly IDialogService _dialogService;
+        private readonly IEventAggregator _eventAggregator;
 
         public DownloadInfo DownloadsSelectedItem {
             get { return _downloadsSelectedItem; }
@@ -108,15 +110,22 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
             }
         }
 
-        public ConnectedViewModel(FileSharingClient client, IDialogService dialogService) {
+        public ConnectedViewModel(FileSharingClient client, IDialogService dialogService, IEventAggregator eventAggregator) {
             _dialogService = dialogService;
+            _eventAggregator = eventAggregator;
 
             _fileSharingClient = client;
             _fileSharingClient.FileReceive += ProcessDownloadInfo;
             _fileSharingClient.FileSend += ProcessUploadInfo;
+            _fileSharingClient.ConnectionLost += ProcessConnectionLost;
 
             Downloads = new BindableCollection<DownloadInfo>();
             Uploads = new BindableCollection<UploadInfo>();
+        }
+
+        private void ProcessConnectionLost(object sender, ConnectionLostEventArgs e) {
+            _dialogService.ShowMessage(e.Exception.Message);
+            _eventAggregator.PublishOnUIThread(new ErrorMessage(null, null));
         }
 
         public void AcceptDownload() {
@@ -135,7 +144,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
             UploadingFile = true;
             if (_dialogService.OpenFileDialog() == true) {
                 foreach (string filePath in _dialogService.OpenFilePaths) {
-                    _fileSharingClient.SendFileAsync(filePath);
+                    await _fileSharingClient.SendFileAsync(filePath);
                 }
             }
             UploadingFile = false;
