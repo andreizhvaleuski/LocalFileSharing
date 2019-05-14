@@ -124,7 +124,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
         }
 
         private void ProcessConnectionLost(object sender, ConnectionLostEventArgs e) {
-            _dialogService.ShowMessage(e.Exception.Message);
+            _dialogService.ShowErrorMessage(e.Exception.Message);
             _eventAggregator.PublishOnUIThread(new ErrorMessage(null, null));
         }
 
