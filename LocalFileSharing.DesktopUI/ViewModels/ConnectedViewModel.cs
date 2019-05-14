@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 using Caliburn.Micro;
+
 using LocalFileSharing.DesktopUI.Messages;
 using LocalFileSharing.DesktopUI.Models;
 using LocalFileSharing.DesktopUI.Services;
@@ -186,6 +186,10 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
                 download.BytesReceived = e.BytesRecived;
                 download.State = e.ReceiveState;
             }
+        }
+
+        public void Disconnect() {
+            _fileSharingClient.Disconnect();
         }
     }
 }

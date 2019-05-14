@@ -39,7 +39,7 @@ namespace LocalFileSharing.DesktopUI.Services {
         }
 
         public void ShowErrorMessage(string errorMessage) {
-            MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show("The connection was last.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         public bool ShowTryCloseMessage(string message) {

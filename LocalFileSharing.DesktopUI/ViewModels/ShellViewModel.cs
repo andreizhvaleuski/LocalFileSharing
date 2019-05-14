@@ -58,7 +58,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
                 throw new ArgumentNullException(nameof(message));
             }
 
-            ActiveItem.TryClose();
+            ActiveItem?.TryClose();
             ActivateItem(_listenConnectVM);
         }
     }

@@ -36,7 +36,7 @@ namespace LocalFileSharing.Network.Domain {
 
         private readonly TcpClient _client;
 
-        private readonly CancellationTokenSource _connectionCancellationTokenSource;
+        public readonly CancellationTokenSource ConnectionCancellationTokenSource;
 
         public FileSharingClient(IPEndPoint ipEndPoint)
             : this(new TcpClient(ipEndPoint)) { }
@@ -62,9 +62,9 @@ namespace LocalFileSharing.Network.Domain {
             _messagesToSend = new ConcurrentQueue<byte[]>();
             _receivedMessages = new ConcurrentQueue<byte[]>();
 
-            _connectionCancellationTokenSource = new CancellationTokenSource();
+            ConnectionCancellationTokenSource = new CancellationTokenSource();
 
-            Initialize(_connectionCancellationTokenSource.Token);
+            Initialize(ConnectionCancellationTokenSource.Token);
         }
 
         private void Initialize(CancellationToken cancellationToken) {
@@ -540,6 +540,19 @@ namespace LocalFileSharing.Network.Domain {
                 $"Initialized: {context.Initialized}, Cancelled: {context.Cancelled}");
         }
 
-        // TODO: Add file initialize cancellation
+        public async Task Clean() {
+            await Task.Run(() => {
+                foreach (var c in _sendFileContexts) {
+                    c.Value?.Reader.Close();
+                }
+                foreach (var c in _receiveFileContexts) {
+                    c.Value?.Writer.Close();
+                }
+            });
+        }
+
+        public void Disconnect() {
+            _client.Disconnect();
+        }
     }
 }

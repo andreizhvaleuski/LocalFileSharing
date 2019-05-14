@@ -54,6 +54,7 @@
                     Text="65000" />
 
                 <Button 
+                    x:Name="Disconnect"
                     Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
                     Content="Disconnect" Style="{StaticResource MainButton}"
                     Margin="10"/>
