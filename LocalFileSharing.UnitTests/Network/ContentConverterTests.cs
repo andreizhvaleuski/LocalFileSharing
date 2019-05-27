@@ -31,7 +31,6 @@ namespace LocalFileSharing.UnitTests.Network {
         [Test]
         public void GetBytes_ValidContent_ReturnsBuffer() {
             ContentBase content = new ResponseContent(
-                Guid.NewGuid(),
                 ResponseType.ReceiveFileInitial
             );
 
@@ -42,13 +41,11 @@ namespace LocalFileSharing.UnitTests.Network {
         [Test]
         public void GetContent_ValidContentBuffer_ReturnsValidContent() {
             ResponseContent expectedContent = new ResponseContent(
-                Guid.NewGuid(),
                 ResponseType.ReceiveFileInitial
             );
             byte[] contentBuffer = contentConverter.GetBytes(expectedContent);
 
             ResponseContent actualContent = (ResponseContent)contentConverter.GetContent(contentBuffer);
-            Assert.AreEqual(expectedContent.OperationID, actualContent.OperationID);
             Assert.AreEqual(expectedContent.ResponseType, actualContent.ResponseType);
             Assert.IsInstanceOf(expectedContent.GetType(), actualContent);
         }
