@@ -59,14 +59,10 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
             TryClose();
         }
 
-        public override void CanClose(Action<bool> callback) {
-            IDialogService dialogService = new DialogService();
-            dialogService.ShowErrorMessage("App will be closed.");
-            base.CanClose(callback);
-        }
-
         public override void TryClose(bool? dialogResult = null) {
             _connectedVM.CleanUnreadyDownloads();
+            IDialogService dialogService = new DialogService();
+            dialogService.ShowErrorMessage("App will be closed.");
             base.TryClose(dialogResult);
         }
     }

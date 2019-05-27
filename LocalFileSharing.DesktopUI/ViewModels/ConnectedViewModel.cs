@@ -195,8 +195,8 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
         }
 
         public void Disconnect() {
-            _fileSharingClient.Disconnect();
             _dialogService.ShowErrorMessage("Connection closed. App will be closed.");
+            _fileSharingClient.Disconnect();
             _eventAggregator.PublishOnUIThread(new ErrorMessage("Disconnected.", "Connection closed. App will be closed."));
         }
 
@@ -206,6 +206,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
                     File.Delete(item.FilePath);
                 }
             }
+            Downloads.Clear();
         }
     }
 }
