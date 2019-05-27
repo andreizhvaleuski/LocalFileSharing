@@ -188,7 +188,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
                 Downloads.Add(download);
             }
             else {
-                DownloadInfo download = Downloads.First( => e.TransferID == d.TransferID);
+                DownloadInfo download = Downloads.First(d => e.TransferID == d.TransferID);
                 download.BytesReceived = e.BytesRecived;
                 download.State = e.ReceiveState;
             }
