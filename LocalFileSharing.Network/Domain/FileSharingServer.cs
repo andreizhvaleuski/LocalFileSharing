@@ -47,7 +47,7 @@ namespace LocalFileSharing.Network.Domain {
         }
 
         public void Disconnect() {
-            _tcpServer.Disconnect();
+            _tcpServer?.Disconnect();
         }
     }
 }

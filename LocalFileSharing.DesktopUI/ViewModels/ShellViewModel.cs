@@ -59,7 +59,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
             }
 
             ActiveItem?.TryClose();
-            ActivateItem(_listenConnectVM);
+            TryClose();
         }
     }
 }

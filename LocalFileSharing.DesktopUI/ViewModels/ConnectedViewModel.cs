@@ -124,8 +124,8 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
         }
 
         private void ProcessConnectionLost(object sender, ConnectionLostEventArgs e) {
-            _dialogService.ShowErrorMessage(e.Exception.Message);
             _eventAggregator.PublishOnUIThread(new ErrorMessage(null, null));
+            _dialogService.ShowErrorMessage(e.Exception.Message);
         }
 
         public void AcceptDownload() {
@@ -190,6 +190,8 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
 
         public void Disconnect() {
             _fileSharingClient.Disconnect();
+            _eventAggregator.PublishOnUIThread(new ErrorMessage(null, null));
+            _dialogService.ShowErrorMessage(null);
         }
     }
 }

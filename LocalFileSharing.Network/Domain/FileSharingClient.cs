@@ -552,7 +552,7 @@ namespace LocalFileSharing.Network.Domain {
         }
 
         public void Disconnect() {
-            _client.Disconnect();
+            _client.Close();
         }
     }
 }

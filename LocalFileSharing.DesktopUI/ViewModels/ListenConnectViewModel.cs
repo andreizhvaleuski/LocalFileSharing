@@ -152,5 +152,9 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
             ConnectIP = IPAddress.Any;
             ConnectPort = TcpSocketBase.MinAllowedPort;
         }
+
+        public void ClearServer() {
+            _listenFileSharingClient.Disconnect();
+        }
     }
 }
