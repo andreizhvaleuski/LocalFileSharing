@@ -191,6 +191,9 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
             }
             else {
                 DownloadInfo download = Downloads.First(d => e.TransferID == d.TransferID);
+                if (download.State == ReceiveFileState.Cancelled) {
+                    return;
+                }
                 download.BytesReceived = e.BytesRecived;
                 download.State = e.ReceiveState;
             }
