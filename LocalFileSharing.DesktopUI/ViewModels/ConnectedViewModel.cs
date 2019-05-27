@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 
 using Caliburn.Micro;
 
@@ -190,8 +191,17 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
 
         public void Disconnect() {
             _fileSharingClient.Disconnect();
-            _eventAggregator.PublishOnUIThread(new ErrorMessage(null, null));
-            _dialogService.ShowErrorMessage(null);
+            CleanUnreadyDownloads();
+            _dialogService.ShowErrorMessage("Connection closed. App will be closed.");
+            _eventAggregator.PublishOnUIThread(new ErrorMessage("Disconnected.", "Connection closed. App will be closed."));
+        }
+
+        public void CleanUnreadyDownloads() {
+            foreach (var item in Downloads) {
+                if (item.State != ReceiveFileState.Completed) {
+                    File.Delete(item.FilePath);
+                }
+            }
         }
     }
 }

@@ -1,25 +1,22 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
+
 using Caliburn.Micro;
 
 using LocalFileSharing.DesktopUI.Messages;
 using LocalFileSharing.DesktopUI.Services;
 
 namespace LocalFileSharing.DesktopUI.ViewModels {
-    public class ShellViewModel
-        : Conductor<IScreen>, IHandle<ConnectedMessage>, IHandle<ErrorMessage> {
+    public class ShellViewModel : Conductor<IScreen>, IHandle<ConnectedMessage>, IHandle<ErrorMessage> {
         private readonly IEventAggregator _eventAggregator;
 
         private ListenConnectViewModel _listenConnectVM;
         private ConnectedViewModel _connectedVM;
-        private ErrorViewModel _errorVM;
 
-        public ShellViewModel(IEventAggregator eventAggregator, ListenConnectViewModel listenConnectVM, ErrorViewModel errorVM) {
+        public ShellViewModel(IEventAggregator eventAggregator, ListenConnectViewModel listenConnectVM) {
             DisplayName = "Local File Sharing";
 
             _listenConnectVM = listenConnectVM;
-            _errorVM = errorVM;
 
             _eventAggregator = eventAggregator;
             _eventAggregator.Subscribe(this);

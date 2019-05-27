@@ -106,14 +106,10 @@
     <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\IDialogService.cs" />
     <Compile Include="ViewModels\ConnectedViewModel.cs" />
-    <Compile Include="ViewModels\ErrorViewModel.cs" />
     <Compile Include="ViewModels\ListenConnectViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="Views\ConnectedView.xaml.cs">
       <DependentUpon>ConnectedView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ErrorView.xaml.cs">
-      <DependentUpon>ErrorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ListenConnectView.xaml.cs">
       <DependentUpon>ListenConnectView.xaml</DependentUpon>
@@ -191,10 +187,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ConnectedView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ErrorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
