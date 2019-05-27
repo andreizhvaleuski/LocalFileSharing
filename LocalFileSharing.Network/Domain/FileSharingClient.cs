@@ -78,16 +78,19 @@ namespace LocalFileSharing.Network.Domain {
         }
 
         private void StartReceive(CancellationToken cancellationToken) {
+            ConnectionLostEventArgs connectionLostEA = null;
             while (!cancellationToken.IsCancellationRequested) {
                 try {
                     byte[] messageBuffer = ReceiveMessage();
                     _receivedMessages.Enqueue(messageBuffer);
                 }
                 catch (Exception e) {
-                    ConnectionLostEventArgs connectionLostEA = new ConnectionLostEventArgs(e);
-                    OnConnectionLost(connectionLostEA);
+                    connectionLostEA = new ConnectionLostEventArgs(e);
                     break;
                 }
+            }
+            if (connectionLostEA is null) {
+                OnConnectionLost(connectionLostEA);
             }
         }
 
@@ -418,7 +421,12 @@ namespace LocalFileSharing.Network.Domain {
                     continue;
                 }
 
-                _client.SendBytes(messageBuffer);
+                try {
+                    _client.SendBytes(messageBuffer);
+                }
+                catch {
+                    return;
+                }
             }
         }
 
