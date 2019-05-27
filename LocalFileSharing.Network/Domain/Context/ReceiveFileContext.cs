@@ -9,9 +9,6 @@ namespace LocalFileSharing.Network.Domain.Context {
             if (Initialized) {
                 return;
             }
-            if (File.Exists(filePath)) {
-                throw new FileNotFoundException();
-            }
             FilePath = filePath;
             Writer = new BinaryWriter(File.Create(FilePath));
             base.Initialize();
