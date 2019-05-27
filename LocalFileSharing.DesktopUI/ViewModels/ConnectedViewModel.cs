@@ -23,6 +23,8 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
         private bool _uploadingFile;
         private bool _cancellingUpload;
 
+        private bool _connectionLostProcessed;
+
         private readonly FileSharingClient _fileSharingClient;
         private readonly IDialogService _dialogService;
         private readonly IEventAggregator _eventAggregator;
@@ -125,8 +127,11 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
         }
 
         private void ProcessConnectionLost(object sender, ConnectionLostEventArgs e) {
-            _eventAggregator.PublishOnUIThread(new ErrorMessage(null, null));
-            _dialogService.ShowErrorMessage(e.Exception.Message);
+            if (!_connectionLostProcessed) {
+                _eventAggregator.PublishOnUIThread(new ErrorMessage(null, e.Exception.Message));
+                _dialogService.ShowErrorMessage(e.Exception.Message);
+                _connectionLostProcessed = true;
+            }
         }
 
         public void AcceptDownload() {

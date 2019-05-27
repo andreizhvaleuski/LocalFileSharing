@@ -89,7 +89,7 @@ namespace LocalFileSharing.Network.Domain {
                     break;
                 }
             }
-            if (connectionLostEA is null) {
+            if (connectionLostEA != null) {
                 OnConnectionLost(connectionLostEA);
             }
         }
@@ -424,8 +424,8 @@ namespace LocalFileSharing.Network.Domain {
                 try {
                     _client.SendBytes(messageBuffer);
                 }
-                catch {
-                    return;
+                catch (Exception e) {
+                    OnConnectionLost(new ConnectionLostEventArgs(e));
                 }
             }
         }

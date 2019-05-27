@@ -62,12 +62,12 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
         public override void CanClose(Action<bool> callback) {
             IDialogService dialogService = new DialogService();
             dialogService.ShowErrorMessage("App will be closed.");
-            callback?.Invoke(true);
+            base.CanClose(callback);
         }
 
         public override void TryClose(bool? dialogResult = null) {
-            base.TryClose(dialogResult);
             _connectedVM.CleanUnreadyDownloads();
+            base.TryClose(dialogResult);
         }
     }
 }
