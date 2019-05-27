@@ -188,14 +188,13 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
                 Downloads.Add(download);
             }
             else {
-                DownloadInfo download = Downloads.First(d => e.TransferID == d.TransferID);
+                DownloadInfo download = Downloads.First( => e.TransferID == d.TransferID);
                 download.BytesReceived = e.BytesRecived;
                 download.State = e.ReceiveState;
             }
         }
 
         public void Disconnect() {
-            _dialogService.ShowErrorMessage("Connection closed. App will be closed.");
             _fileSharingClient.Disconnect();
             _eventAggregator.PublishOnUIThread(new ErrorMessage("Disconnected.", "Connection closed. App will be closed."));
         }
