@@ -144,6 +144,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
 
         public void CancelDownload() {
             _fileSharingClient.CancellReceive(DownloadsSelectedItem.TransferID);
+            NotifyOfPropertyChange(() => CanCancelDownload);
         }
 
         public async void UploadFile() {
@@ -158,6 +159,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
 
         public void CancelUpload() {
             _fileSharingClient.CancellSend(UploadsSelectedItem.TransferID);
+            NotifyOfPropertyChange(() => CanCancelUpload);
         }
 
         private void ProcessUploadInfo(object sender, SendFileEventArgs e) {
