@@ -129,7 +129,7 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
         private void ProcessConnectionLost(object sender, ConnectionLostEventArgs e) {
             if (!_connectionLostProcessed) {
                 _eventAggregator.PublishOnUIThread(new ErrorMessage(null, e.Exception.Message));
-                _dialogService.ShowErrorMessage(e.Exception.Message);
+                //_dialogService.ShowErrorMessage(e.Exception.Message);
                 _connectionLostProcessed = true;
             }
         }
