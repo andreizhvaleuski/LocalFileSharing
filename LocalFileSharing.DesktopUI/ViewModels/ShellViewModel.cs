@@ -55,12 +55,12 @@ namespace LocalFileSharing.DesktopUI.ViewModels {
                 throw new ArgumentNullException(nameof(message));
             }
 
+            _connectedVM.CleanUnreadyDownloads();
             ActiveItem?.TryClose();
             TryClose();
         }
 
         public override void TryClose(bool? dialogResult = null) {
-            _connectedVM.CleanUnreadyDownloads();
             IDialogService dialogService = new DialogService();
             dialogService.ShowErrorMessage("App will be closed.");
             base.TryClose(dialogResult);
