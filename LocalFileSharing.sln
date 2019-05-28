@@ -3,7 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalFileSharing.Network", "LocalFileSharing.Network\LocalFileSharing.Network.csproj", "{02B56641-6AB7-405C-8B08-ADD596DF687C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalFileSharing.UnitTests", "LocalFileSharing.UnitTests\LocalFileSharing.UnitTests.csproj", "{8A52E683-638A-4951-B68A-A3476FA8158A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LocalFileSharing.DesktopUI", "LocalFileSharing.DesktopUI\LocalFileSharing.DesktopUI.csproj", "{9996F9CA-8A7F-48CF-87B9-91C749C234B7}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{02B56641-6AB7-405C-8B08-ADD596DF687C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02B56641-6AB7-405C-8B08-ADD596DF687C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02B56641-6AB7-405C-8B08-ADD596DF687C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02B56641-6AB7-405C-8B08-ADD596DF687C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A52E683-638A-4951-B68A-A3476FA8158A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A52E683-638A-4951-B68A-A3476FA8158A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A52E683-638A-4951-B68A-A3476FA8158A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A52E683-638A-4951-B68A-A3476FA8158A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9996F9CA-8A7F-48CF-87B9-91C749C234B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9996F9CA-8A7F-48CF-87B9-91C749C234B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9996F9CA-8A7F-48CF-87B9-91C749C234B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9996F9CA-8A7F-48CF-87B9-91C749C234B7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection

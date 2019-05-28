@@ -1,0 +1,24 @@
+﻿<Window x:Class="LocalFileSharing.DesktopUI.Views.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LocalFileSharing.DesktopUI.Views"
+        mc:Ignorable="d"
+        Title="{Binding DisplayName}" WindowState="Maximized">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem x:Name="ListenOrConnect" Header="Listen / Connect" />
+                <Separator />
+                <MenuItem x:Name="Exit" Header="_Exit" />
+            </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem x:Name="Options" Header="_Options" />
+            </MenuItem>
+        </Menu>
+        <Grid Margin="5">
+            <ContentControl x:Name="ActiveItem" />
+        </Grid>
+    </DockPanel>
+</Window>

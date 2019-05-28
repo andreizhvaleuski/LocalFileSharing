@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:LocalFileSharing.DesktopUI.Styles">
+
+    <!-- https://flatuicolors.com/palette/ru -->
+
+    <SolidColorBrush x:Key="CreamyPeach" Color="#f3a683" />
+    <SolidColorBrush x:Key="SawtoothAak" Color="#f19066" />
+
+    <SolidColorBrush x:Key="RosyHighlight" Color="#f7d794" />
+    <SolidColorBrush x:Key="Summertime" Color="#f5cd79" />
+
+    <SolidColorBrush x:Key="SoftBlue" Color="#778beb" />
+    <SolidColorBrush x:Key="Cornflower" Color="#546de5" />
+
+    <SolidColorBrush x:Key="BrewedMustard" Color="#e77f67" />
+    <SolidColorBrush x:Key="Tigerlily" Color="#e15f41" />
+
+    <SolidColorBrush x:Key="OldGeranium" Color="#cf6a87" />
+    <SolidColorBrush x:Key="DeepRose" Color="#c44569" />
+
+    <SolidColorBrush x:Key="PurpleMountainMajesty" Color="#786fa6" />
+    <SolidColorBrush x:Key="PurpleCorallite" Color="#574b90" />
+
+    <SolidColorBrush x:Key="RoguePink" Color="#f8a5c2" />
+    <SolidColorBrush x:Key="FlamingoPink" Color="#f78fb3" />
+
+    <SolidColorBrush x:Key="Squeaky" Color="#63cdda" />
+    <SolidColorBrush x:Key="BlueCuracao" Color="#3dc1d3" />
+
+    <SolidColorBrush x:Key="AppleValley" Color="#ea8685" />
+    <SolidColorBrush x:Key="PorcelainRose" Color="#e66767" />
+
+    <SolidColorBrush x:Key="PencilLead" Color="#596275" />
+    <SolidColorBrush x:Key="Biscay" Color="#303952" />
+
+</ResourceDictionary>
